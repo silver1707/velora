@@ -50,6 +50,7 @@ export async function updateProfileSettingsAction(
   }
 
   revalidatePath("/ajustes");
+  revalidatePath("/perfil");
   if (parsed.data.public_slug) {
     revalidatePath(`/${parsed.data.public_slug}`);
   }

@@ -77,6 +77,11 @@ export const productSchema = z.object({
   name: z.string().min(2, "Informe o nome do produto."),
   brand: optionalText,
   category: optionalText,
+  unit: z
+    .string()
+    .trim()
+    .min(1, "Informe a unidade.")
+    .max(12, "Use uma unidade curta."),
   stock_quantity: z.preprocess((value) => {
     if (value === "" || value === undefined || value === null) {
       return 0;
@@ -167,6 +172,12 @@ export const publicBookingRequestSchema = z.object({
     }),
   client_name: z.string().min(2, "Informe seu nome."),
   client_phone: z.string().min(8, "Informe um WhatsApp válido."),
+  client_birth_date: optionalDate,
+  client_hair_type: optionalText,
+  client_preferences: optionalText,
+  client_allergies: optionalText,
+  client_chemical_history: optionalText,
+  client_service_frequency: optionalText,
   client_notes: optionalText,
 });
 

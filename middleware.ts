@@ -13,15 +13,19 @@ const publicRoutes = [
   "/privacidade",
   "/robots.txt",
   "/sitemap.xml",
+  "/api/booking-requests/summary",
 ];
 
 const protectedRoutes = [
   "/dashboard",
   "/clientes",
   "/agenda",
+  "/pedidos",
   "/atendimentos",
+  "/servicos",
   "/produtos",
   "/financeiro",
+  "/perfil",
   "/ajustes",
 ];
 

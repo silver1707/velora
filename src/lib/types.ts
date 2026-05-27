@@ -65,6 +65,7 @@ export type Product = {
   name: string;
   brand: string | null;
   category: string | null;
+  unit: string;
   stock_quantity: number;
   low_stock_threshold: number;
   cost: number | null;
@@ -125,6 +126,12 @@ export type BookingRequest = {
   service_record_id: string | null;
   client_name: string;
   client_phone: string;
+  client_birth_date: string | null;
+  client_hair_type: string | null;
+  client_preferences: string | null;
+  client_allergies: string | null;
+  client_chemical_history: string | null;
+  client_service_frequency: string | null;
   client_notes: string | null;
   service_name: string;
   requested_start_at: string;

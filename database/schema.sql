@@ -79,6 +79,7 @@ create table if not exists public.products (
   name text not null,
   brand text,
   category text,
+  unit text not null default 'un',
   stock_quantity numeric(12,2) not null default 0,
   low_stock_threshold numeric(12,2) not null default 1 check (low_stock_threshold >= 0),
   cost numeric(12,2) check (cost is null or cost >= 0),
@@ -89,6 +90,7 @@ create table if not exists public.products (
 );
 
 alter table public.products drop constraint if exists products_stock_quantity_check;
+alter table public.products add column if not exists unit text not null default 'un';
 
 create table if not exists public.service_records (
   id uuid primary key default gen_random_uuid(),
@@ -129,6 +131,12 @@ create table if not exists public.booking_requests (
   service_record_id uuid references public.service_records(id) on delete set null,
   client_name text not null,
   client_phone text not null,
+  client_birth_date date,
+  client_hair_type text,
+  client_preferences text,
+  client_allergies text,
+  client_chemical_history text,
+  client_service_frequency text,
   client_notes text,
   service_name text not null,
   requested_start_at timestamptz not null,
@@ -138,6 +146,13 @@ create table if not exists public.booking_requests (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.booking_requests add column if not exists client_birth_date date;
+alter table public.booking_requests add column if not exists client_hair_type text;
+alter table public.booking_requests add column if not exists client_preferences text;
+alter table public.booking_requests add column if not exists client_allergies text;
+alter table public.booking_requests add column if not exists client_chemical_history text;
+alter table public.booking_requests add column if not exists client_service_frequency text;
 
 create table if not exists public.service_products (
   id uuid primary key default gen_random_uuid(),

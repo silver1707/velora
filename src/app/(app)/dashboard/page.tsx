@@ -6,15 +6,11 @@ import {
   Scissors,
   UsersRound,
 } from "lucide-react";
-import { QuickActionForm } from "@/components/forms/quick-action-form";
+import { BookingRequestsList } from "@/components/bookings/booking-requests-list";
 import { ServicesChart } from "@/components/dashboard/services-chart";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
-import {
-  acceptBookingRequestAction,
-  rejectBookingRequestAction,
-} from "@/server/actions/bookings";
 import { getDashboardData } from "@/server/queries";
 import { currency, dateTimeLabel, statusLabel, statusTone } from "@/lib/utils";
 
@@ -30,18 +26,20 @@ function MetricCard({
   detail: string;
 }) {
   return (
-    <article className="premium-panel overflow-hidden rounded-2xl p-4 sm:p-5 flex flex-col h-full">
-      <div className="brand-action mb-4 h-1 w-12 sm:w-16 rounded-full" />
+    <article className="premium-panel flex h-full flex-col overflow-hidden rounded-2xl p-4 sm:p-5">
+      <div className="brand-action mb-4 h-1 w-12 rounded-full sm:w-16" />
       <div className="flex items-center justify-between gap-4">
-        <div className="brand-tile flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-lg text-lilac">
-          <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+        <div className="brand-tile flex h-9 w-9 items-center justify-center rounded-lg text-lilac sm:h-11 sm:w-11">
+          <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
         </div>
       </div>
-      <p className="mt-4 text-xs sm:text-sm text-muted line-clamp-1">{label}</p>
-      <strong className="mt-1 block text-lg sm:text-2xl font-semibold text-foreground truncate">
+      <p className="mt-4 line-clamp-1 text-xs text-muted sm:text-sm">{label}</p>
+      <strong className="mt-1 block truncate text-lg font-semibold text-foreground sm:text-2xl">
         {value}
       </strong>
-      <p className="mt-2 text-[10px] sm:text-xs leading-snug text-muted line-clamp-2 sm:line-clamp-none flex-1">{detail}</p>
+      <p className="mt-2 line-clamp-2 flex-1 text-[10px] leading-snug text-muted sm:line-clamp-none sm:text-xs">
+        {detail}
+      </p>
     </article>
   );
 }
@@ -54,10 +52,10 @@ export default async function DashboardPage() {
       <PageHeader
         eyebrow="Visão geral"
         title="Dashboard"
-        description="Métricas rápidas para começar o dia sabendo agenda, receita e estoque."
+        description="Métricas rápidas para começar o dia sabendo agenda, receita, estoque e pedidos online."
       />
 
-      <section className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+      <section className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-5">
         <MetricCard
           icon={UsersRound}
           label="Clientes cadastradas"
@@ -69,6 +67,12 @@ export default async function DashboardPage() {
           label="Atendimentos no mês"
           value={String(data.monthServices.length)}
           detail="Inclui agendados, concluídos, pendentes e cancelados."
+        />
+        <MetricCard
+          icon={CalendarPlus}
+          label="Pedidos online"
+          value={String(data.bookingRequests.length)}
+          detail="Solicitações aguardando aceite pelo link público."
         />
         <MetricCard
           icon={CircleDollarSign}
@@ -84,63 +88,22 @@ export default async function DashboardPage() {
         />
       </section>
 
-      {data.bookingRequests.length ? (
-        <section className="premium-panel mt-6 rounded-lg p-5">
-          <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-lilac/20 bg-lilac/10 text-lilac">
-              <CalendarPlus size={18} />
-            </div>
-            <div>
-              <h2 className="text-lg font-semibold text-foreground">
-                Pedidos de agendamento online
-              </h2>
-              <p className="text-sm text-muted">
-                Confirme os horários que chegaram pelo seu link público.
-              </p>
-            </div>
+      <section className="premium-panel mt-6 rounded-lg p-5">
+        <div className="mb-5 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-lilac/20 bg-lilac/10 text-lilac">
+            <CalendarPlus size={18} />
           </div>
-          <div className="grid gap-3 lg:grid-cols-2">
-            {data.bookingRequests.map((request) => (
-              <article key={request.id} className="surface-row rounded-lg p-4">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <p className="font-medium text-foreground">{request.client_name}</p>
-                    <p className="mt-1 text-sm text-muted">
-                      {request.service_name} · {dateTimeLabel(request.requested_start_at)}
-                    </p>
-                    <p className="mt-1 text-sm text-muted">
-                      {currency(request.estimated_price)} · {request.requested_duration_minutes} min
-                    </p>
-                    {request.client_notes ? (
-                      <p className="mt-2 text-sm leading-6 text-muted">
-                        {request.client_notes}
-                      </p>
-                    ) : null}
-                  </div>
-                  <Badge className="border-gold/30 bg-gold/10 text-gold">
-                    Pendente
-                  </Badge>
-                </div>
-                <div className="mt-4 flex flex-wrap gap-2 border-t border-border-soft pt-4">
-                  <QuickActionForm
-                    action={acceptBookingRequestAction}
-                    fields={{ id: request.id }}
-                    label="Aceitar"
-                    variant="primary"
-                  />
-                  <QuickActionForm
-                    action={rejectBookingRequestAction}
-                    fields={{ id: request.id }}
-                    label="Recusar"
-                    variant="danger"
-                    confirmMessage="Recusar este pedido de agendamento?"
-                  />
-                </div>
-              </article>
-            ))}
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">
+              Pedidos de agendamento online
+            </h2>
+            <p className="text-sm text-muted">
+              Aceitar cria cliente e agendamento automaticamente; recusar remove da fila.
+            </p>
           </div>
-        </section>
-      ) : null}
+        </div>
+        <BookingRequestsList requests={data.bookingRequests} />
+      </section>
 
       <section className="mt-6 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
         <article className="premium-panel rounded-lg p-5">
@@ -172,17 +135,14 @@ export default async function DashboardPage() {
           {data.todayAppointments.length ? (
             <div className="grid gap-3">
               {data.todayAppointments.map((service) => (
-                <div
-                  key={service.id}
-                  className="surface-row rounded-lg p-4"
-                >
+                <div key={service.id} className="surface-row rounded-lg p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="font-medium text-foreground">
                         {service.clients?.name ?? "Cliente"}
                       </p>
                       <p className="mt-1 text-sm text-muted">
-                        {service.service_type} • {dateTimeLabel(service.scheduled_at)}
+                        {service.service_type} · {dateTimeLabel(service.scheduled_at)}
                       </p>
                     </div>
                     <Badge className={statusTone[service.status]}>
@@ -200,7 +160,6 @@ export default async function DashboardPage() {
           )}
         </article>
       </section>
-
     </>
   );
 }

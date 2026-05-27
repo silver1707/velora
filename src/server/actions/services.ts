@@ -20,13 +20,15 @@ import {
 function productPayload(formData: FormData, serviceRecordId: string, userId: string) {
   const productIds = formData.getAll("product_ids").map(String).filter(Boolean);
 
-  return productIds.map((productId) => ({
-    user_id: userId,
-    service_record_id: serviceRecordId,
-    product_id: productId,
-    quantity_used: Number(formData.get(`quantity_${productId}`) || 1),
-    notes: null,
-  }));
+  return productIds
+    .map((productId) => ({
+      user_id: userId,
+      service_record_id: serviceRecordId,
+      product_id: productId,
+      quantity_used: Number(formData.get(`quantity_${productId}`) || 1),
+      notes: null,
+    }))
+    .filter((item) => Number.isFinite(item.quantity_used) && item.quantity_used > 0);
 }
 
 async function syncServiceStock(
@@ -148,6 +150,7 @@ export async function createServiceAction(
   revalidatePath("/agenda");
   revalidatePath(`/clientes/${service.client_id}`);
   revalidatePath("/financeiro");
+  revalidatePath("/produtos");
   revalidatePath("/dashboard");
   return actionSuccess("Atendimento salvo.");
 }
@@ -219,6 +222,7 @@ export async function updateServiceAction(
   revalidatePath("/agenda");
   revalidatePath(`/clientes/${service.client_id}`);
   revalidatePath("/financeiro");
+  revalidatePath("/produtos");
   revalidatePath("/dashboard");
   return actionSuccess("Atendimento atualizado.");
 }
@@ -272,6 +276,7 @@ export async function updateServiceStatusAction(
   revalidatePath("/agenda");
   revalidatePath(`/clientes/${data.client_id}`);
   revalidatePath("/financeiro");
+  revalidatePath("/produtos");
   revalidatePath("/dashboard");
   return actionSuccess("Status atualizado.");
 }
@@ -318,6 +323,7 @@ export async function deleteServiceAction(
   revalidatePath("/atendimentos");
   revalidatePath("/agenda");
   revalidatePath("/financeiro");
+  revalidatePath("/produtos");
   revalidatePath("/dashboard");
   return actionSuccess("Atendimento excluído.");
 }

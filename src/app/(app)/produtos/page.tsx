@@ -101,7 +101,7 @@ export default async function ProductsPage({
                   <div>
                     <p className="text-xs uppercase tracking-wider text-muted mb-1">Estoque Atual</p>
                     <p className={`text-2xl font-bold ${low ? "text-danger" : "text-foreground"}`}>
-                      {product.stock_quantity} <span className="text-sm font-medium text-muted">un</span>
+                      {product.stock_quantity} <span className="text-sm font-medium text-muted">{product.unit}</span>
                     </p>
                   </div>
                   
@@ -126,7 +126,7 @@ export default async function ProductsPage({
                 <dl className="mt-4 grid grid-cols-2 gap-3 text-sm px-2">
                   <div>
                     <dt className="text-muted text-xs uppercase tracking-wider mb-0.5">Mínimo</dt>
-                    <dd className="font-medium text-foreground">{product.low_stock_threshold}</dd>
+                    <dd className="font-medium text-foreground">{product.low_stock_threshold} {product.unit}</dd>
                   </div>
                   <div>
                     <dt className="text-muted text-xs uppercase tracking-wider mb-0.5">Custo</dt>

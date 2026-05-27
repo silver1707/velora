@@ -32,6 +32,14 @@ function sameInstant(left: string, right: string) {
   return new Date(left).getTime() === new Date(right).getTime();
 }
 
+function phoneDigits(value?: string | null) {
+  return (value ?? "").replace(/\D/g, "");
+}
+
+function mergeValue<T>(current: T | null | undefined, incoming: T | null | undefined) {
+  return current ?? incoming ?? null;
+}
+
 export async function createBookingRequestAction(
   _state: ActionState,
   formData: FormData,
@@ -81,6 +89,12 @@ export async function createBookingRequestAction(
     service_catalog_id: service.id,
     client_name: parsed.data.client_name,
     client_phone: parsed.data.client_phone,
+    client_birth_date: parsed.data.client_birth_date,
+    client_hair_type: parsed.data.client_hair_type,
+    client_preferences: parsed.data.client_preferences,
+    client_allergies: parsed.data.client_allergies,
+    client_chemical_history: parsed.data.client_chemical_history,
+    client_service_frequency: parsed.data.client_service_frequency,
     client_notes: parsed.data.client_notes,
     service_name: service.name,
     requested_start_at: new Date(parsed.data.requested_start_at).toISOString(),
@@ -94,7 +108,10 @@ export async function createBookingRequestAction(
   }
 
   revalidatePath(`/${parsed.data.slug}`);
-  return actionSuccess("Pedido enviado. A profissional vai confirmar pelo Velora.");
+  revalidatePath("/pedidos");
+  revalidatePath("/dashboard");
+  revalidatePath("/agenda");
+  return actionSuccess("Pedido enviado para a aba Pedidos no Velora.");
 }
 
 export async function acceptBookingRequestAction(
@@ -136,6 +153,7 @@ export async function acceptBookingRequestAction(
   const { data: possibleConflicts, error: conflictError } = await supabase
     .from("service_records")
     .select("id, scheduled_at, duration_minutes")
+    .eq("user_id", userId)
     .neq("status", "cancelado")
     .gte("scheduled_at", windowStart.toISOString())
     .lt("scheduled_at", requestedEnd.toISOString());
@@ -157,24 +175,74 @@ export async function acceptBookingRequestAction(
     return actionFailure("Esse horário já foi ocupado na agenda.");
   }
 
+  const requestedPhoneDigits = phoneDigits(booking.client_phone);
   const { data: existingClients, error: clientLookupError } = await supabase
     .from("clients")
-    .select("id")
-    .eq("phone", booking.client_phone)
-    .limit(1);
+    .select("id, name, phone, birth_date, hair_type, preferences, allergies, chemical_history, service_frequency, notes")
+    .eq("user_id", userId);
 
   if (clientLookupError) {
     return actionFailure(clientLookupError.message);
   }
 
-  let clientId = existingClients?.[0]?.id as string | undefined;
-  if (!clientId) {
+  const normalizedName = booking.client_name.trim().toLowerCase();
+  const existingClient = (existingClients ?? []).find((client) => {
+    const clientDigits = phoneDigits(client.phone);
+    if (requestedPhoneDigits && clientDigits) {
+      return clientDigits === requestedPhoneDigits;
+    }
+
+    return client.name.trim().toLowerCase() === normalizedName;
+  });
+
+  let clientId = existingClient?.id as string | undefined;
+  if (clientId && existingClient) {
+    const { error: updateClientError } = await supabase
+      .from("clients")
+      .update({
+        name: existingClient.name || booking.client_name,
+        phone: existingClient.phone || booking.client_phone,
+        birth_date: mergeValue(existingClient.birth_date, booking.client_birth_date),
+        hair_type: mergeValue(existingClient.hair_type, booking.client_hair_type),
+        preferences: mergeValue(existingClient.preferences, booking.client_preferences),
+        allergies: mergeValue(existingClient.allergies, booking.client_allergies),
+        chemical_history: mergeValue(
+          existingClient.chemical_history,
+          booking.client_chemical_history,
+        ),
+        service_frequency: mergeValue(
+          existingClient.service_frequency,
+          booking.client_service_frequency,
+        ),
+        notes: [
+          existingClient.notes,
+          booking.client_notes
+            ? `Pedido online: ${booking.client_notes}`
+            : null,
+        ]
+          .filter(Boolean)
+          .join("\n"),
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", clientId)
+      .eq("user_id", userId);
+
+    if (updateClientError) {
+      return actionFailure(updateClientError.message);
+    }
+  } else {
     const { data: client, error: clientError } = await supabase
       .from("clients")
       .insert({
         user_id: userId,
         name: booking.client_name,
         phone: booking.client_phone,
+        birth_date: booking.client_birth_date,
+        hair_type: booking.client_hair_type,
+        preferences: booking.client_preferences,
+        allergies: booking.client_allergies,
+        chemical_history: booking.client_chemical_history,
+        service_frequency: booking.client_service_frequency,
         notes: "Cliente criada a partir de um pedido de agendamento online.",
       })
       .select("id")
@@ -222,13 +290,15 @@ export async function acceptBookingRequestAction(
       service_record_id: service.id,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", booking.id);
+    .eq("id", booking.id)
+    .eq("professional_id", userId);
 
   if (updateError) {
     return actionFailure(updateError.message);
   }
 
   revalidatePath("/dashboard");
+  revalidatePath("/pedidos");
   revalidatePath("/agenda");
   revalidatePath("/atendimentos");
   revalidatePath("/clientes");
@@ -249,20 +319,25 @@ export async function rejectBookingRequestAction(
     return context;
   }
 
-  const { supabase } = context;
-  const { error } = await supabase
+  const { supabase, userId } = context;
+  const { data, error } = await supabase
     .from("booking_requests")
     .update({
       status: "recusado",
       updated_at: new Date().toISOString(),
     })
     .eq("id", parsed.data.id)
-    .eq("status", "pendente");
+    .eq("professional_id", userId)
+    .eq("status", "pendente")
+    .select("id")
+    .maybeSingle();
 
-  if (error) {
-    return actionFailure(error.message);
+  if (error || !data) {
+    return actionFailure(error?.message ?? "Pedido nÃ£o encontrado ou jÃ¡ respondido.");
   }
 
   revalidatePath("/dashboard");
+  revalidatePath("/pedidos");
+  revalidatePath("/agenda");
   return actionSuccess("Pedido recusado.");
 }

@@ -240,18 +240,22 @@ function ServiceCard({
                <MessageCircle size={16} />
                Lembrete via WhatsApp
              </LinkButton>
-             <QuickActionForm
-               action={updateServiceStatusAction}
-               fields={{ id: service.id, status: "concluido" }}
-               label="Marcar como Concluído"
-               variant="primary"
-             />
-             <QuickActionForm
-               action={updateServiceStatusAction}
-               fields={{ id: service.id, status: "cancelado" }}
-               label="Cancelar Horário"
-               variant="danger"
-             />
+             {!isDone ? (
+               <QuickActionForm
+                 action={updateServiceStatusAction}
+                 fields={{ id: service.id, status: "concluido" }}
+                 label="Marcar como Concluído"
+                 variant="primary"
+               />
+             ) : null}
+             {!isCanceled ? (
+               <QuickActionForm
+                 action={updateServiceStatusAction}
+                 fields={{ id: service.id, status: "cancelado" }}
+                 label="Cancelar Horário"
+                 variant="danger"
+               />
+             ) : null}
          </div>
       </div>
     </Sheet>

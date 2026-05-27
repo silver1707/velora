@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { ActionMessage } from "@/components/forms/action-message";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { Field, Input, Select, Textarea } from "@/components/ui/field";
-import { productCategories } from "@/lib/constants";
+import { productCategories, productUnits } from "@/lib/constants";
 import { initialActionState, type ActionState, type Product } from "@/lib/types";
 import {
   createProductAction,
@@ -36,6 +36,15 @@ export function ProductForm({ product }: { product?: Product }) {
             ))}
           </Select>
         </Field>
+        <Field label="Unidade de controle">
+          <Select name="unit" defaultValue={product?.unit ?? "un"}>
+            {productUnits.map((unit) => (
+              <option key={unit} value={unit}>
+                {unit}
+              </option>
+            ))}
+          </Select>
+        </Field>
         <Field label="Custo">
           <Input
             name="cost"
@@ -45,7 +54,7 @@ export function ProductForm({ product }: { product?: Product }) {
             defaultValue={product?.cost ?? ""}
           />
         </Field>
-        <Field label="Quantidade em estoque">
+        <Field label={`Quantidade em estoque (${product?.unit ?? "un"})`}>
           <Input
             name="stock_quantity"
             type="number"
@@ -54,7 +63,7 @@ export function ProductForm({ product }: { product?: Product }) {
             defaultValue={product?.stock_quantity ?? 0}
           />
         </Field>
-        <Field label="Alerta abaixo de">
+        <Field label={`Alerta abaixo de (${product?.unit ?? "un"})`}>
           <Input
             name="low_stock_threshold"
             type="number"

@@ -17,6 +17,7 @@ import {
 
 function revalidateCatalogPaths() {
   revalidatePath("/ajustes");
+  revalidatePath("/servicos");
   revalidatePath("/agenda");
   revalidatePath("/atendimentos");
   revalidatePath("/dashboard");

@@ -26,6 +26,8 @@ import {
   getServiceRecordsPage,
 } from "@/server/queries";
 
+export const dynamic = "force-dynamic";
+
 export default async function ServicesPage({
   searchParams,
 }: {
@@ -127,18 +129,22 @@ export default async function ServicesPage({
                       catalogServices={catalogServices}
                     />
                   </Sheet>
-                  <QuickActionForm
-                    action={updateServiceStatusAction}
-                    fields={{ id: service.id, status: "concluido" }}
-                    label="Concluir"
-                    variant="secondary"
-                  />
-                  <QuickActionForm
-                    action={updateServiceStatusAction}
-                    fields={{ id: service.id, status: "cancelado" }}
-                    label="Cancelar"
-                    variant="danger"
-                  />
+                  {service.status !== "concluido" ? (
+                    <QuickActionForm
+                      action={updateServiceStatusAction}
+                      fields={{ id: service.id, status: "concluido" }}
+                      label="Concluir"
+                      variant="secondary"
+                    />
+                  ) : null}
+                  {service.status !== "cancelado" ? (
+                    <QuickActionForm
+                      action={updateServiceStatusAction}
+                      fields={{ id: service.id, status: "cancelado" }}
+                      label="Cancelar"
+                      variant="danger"
+                    />
+                  ) : null}
                 </div>
               </div>
 
@@ -146,7 +152,7 @@ export default async function ServicesPage({
                 <div className="mt-4 flex flex-wrap gap-2">
                   {service.service_products.map((item) => (
                     <Badge key={item.id} className="border-border/70 bg-background/35 text-muted">
-                      {item.products?.name ?? "Produto"} x {item.quantity_used}
+                      {item.products?.name ?? "Produto"} x {item.quantity_used} {item.products?.unit ?? ""}
                     </Badge>
                   ))}
                 </div>

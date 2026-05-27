@@ -175,6 +175,20 @@ export async function getBookingRequests(params?: { status?: string; limit?: num
   return (data ?? []) as BookingRequest[];
 }
 
+export async function getPendingBookingRequestsCount() {
+  const { supabase } = await requireSession();
+  const { count, error } = await supabase
+    .from("booking_requests")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "pendente");
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return count ?? 0;
+}
+
 export async function getPublicBookingData(
   slug: string,
   params?: { date?: string; serviceId?: string },

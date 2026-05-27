@@ -2,12 +2,13 @@
 
 import {
   CalendarDays,
+  CalendarPlus,
   ChartNoAxesCombined,
   CircleDollarSign,
   LayoutDashboard,
   Package,
   Scissors,
-  Settings,
+  Sparkles,
   UsersRound,
 } from "lucide-react";
 import Link from "next/link";
@@ -19,13 +20,21 @@ const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/clientes", label: "Clientes", icon: UsersRound },
   { href: "/agenda", label: "Agenda", icon: CalendarDays },
+  { href: "/pedidos", label: "Pedidos", icon: CalendarPlus },
   { href: "/atendimentos", label: "Atendimentos", icon: Scissors },
+  { href: "/servicos", label: "Servicos", icon: Sparkles },
   { href: "/produtos", label: "Produtos", icon: Package },
   { href: "/financeiro", label: "Financeiro", icon: CircleDollarSign },
-  { href: "/ajustes", label: "Ajustes", icon: Settings },
+  { href: "/perfil", label: "Perfil", icon: UsersRound },
 ];
 
-export function SidebarNav({ mobile = false }: { mobile?: boolean }) {
+export function SidebarNav({
+  mobile = false,
+  pendingBookingRequestsCount = 0,
+}: {
+  mobile?: boolean;
+  pendingBookingRequestsCount?: number;
+}) {
   const pathname = usePathname();
 
   return (
@@ -40,13 +49,14 @@ export function SidebarNav({ mobile = false }: { mobile?: boolean }) {
       {navItems.map((item) => {
         const Icon = item.icon;
         const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+        const showBadge = item.href === "/pedidos" && pendingBookingRequestsCount > 0;
 
         return (
           <Link
             key={item.href}
             href={item.href}
             className={cn(
-              "group flex items-center gap-3 rounded-lg border px-3 py-2.5 text-sm font-medium transition",
+              "group relative flex items-center gap-3 rounded-lg border px-3 py-2.5 text-sm font-medium transition",
               mobile && "min-w-16 flex-col gap-1 px-2 py-1.5 text-[10px]",
               active
                 ? "border-lilac/35 bg-lilac/12 text-foreground shadow-sm shadow-lilac-strong/10"
@@ -58,6 +68,16 @@ export function SidebarNav({ mobile = false }: { mobile?: boolean }) {
               className={cn(active ? "text-lilac" : "text-muted")}
             />
             <span className={mobile ? "truncate w-full text-center" : undefined}>{item.label}</span>
+            {showBadge ? (
+              <span
+                className={cn(
+                  "ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-lilac-strong px-1.5 text-[10px] font-bold text-white",
+                  mobile && "absolute -right-1 -top-1 ml-0",
+                )}
+              >
+                {pendingBookingRequestsCount > 99 ? "99+" : pendingBookingRequestsCount}
+              </span>
+            ) : null}
           </Link>
         );
       })}

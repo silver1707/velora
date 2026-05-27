@@ -5,9 +5,11 @@ import type { User } from "@supabase/supabase-js";
 
 export function AppShell({
   user,
+  pendingBookingRequestsCount = 0,
   children,
 }: {
   user: User;
+  pendingBookingRequestsCount?: number;
   children: React.ReactNode;
 }) {
   const email = user.email ?? "conta Velora";
@@ -17,7 +19,7 @@ export function AppShell({
       <aside className="hidden w-[280px] shrink-0 border-r border-border-soft bg-surface/50 p-6 backdrop-blur-2xl lg:flex lg:flex-col shadow-[1px_0_40px_rgba(0,0,0,0.05)]">
         <BrandMark />
         <div className="mt-10">
-          <SidebarNav />
+          <SidebarNav pendingBookingRequestsCount={pendingBookingRequestsCount} />
         </div>
         <div className="surface-row mt-auto rounded-2xl p-5 border border-border-soft/50 shadow-sm">
           <p className="truncate text-sm font-semibold text-foreground">{email}</p>
@@ -44,6 +46,9 @@ export function AppShell({
               </h1>
             </div>
             <div className="flex items-center gap-3">
+              {pendingBookingRequestsCount > 0 ? (
+                <HeaderMetric label="Pedidos" value={String(pendingBookingRequestsCount)} />
+              ) : null}
               <HeaderMetric label="Sessão" value="Ativa" />
               <form action="/auth/signout" method="post" className="lg:hidden">
                 <Button type="submit" variant="secondary" size="icon" className="rounded-full w-10 h-10 border-border-soft/50 shadow-sm" aria-label="Sair">
@@ -61,7 +66,10 @@ export function AppShell({
 
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border-soft bg-surface/80 px-2 pt-2 pb-safe backdrop-blur-2xl lg:hidden shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
         <div className="pb-2">
-          <SidebarNav mobile />
+          <SidebarNav
+            mobile
+            pendingBookingRequestsCount={pendingBookingRequestsCount}
+          />
         </div>
       </div>
     </div>

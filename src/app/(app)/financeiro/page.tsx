@@ -1,6 +1,6 @@
 import { addMonths, format, parse, startOfMonth, startOfWeek, subMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { CircleDollarSign, Plus, ChevronLeft, ChevronRight, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight, CircleDollarSign, FileDown, Plus } from "lucide-react";
 import Link from "next/link";
 import { FinanceEntryForm } from "@/components/forms/finance-entry-form";
 import { QuickActionForm } from "@/components/forms/quick-action-form";
@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Field, Input } from "@/components/ui/field";
 import { Pagination } from "@/components/ui/pagination";
 import { Sheet } from "@/components/ui/sheet";
 import { currency, dayRange } from "@/lib/utils";
@@ -39,6 +40,11 @@ export default async function FinancePage({
   const weekStart = startOfWeek(baseDate, { weekStartsOn: 1 });
   const monthStart = startOfMonth(baseDate);
   const monthEnd = addMonths(monthStart, 1);
+  const exportFrom = format(monthStart, "yyyy-MM-dd");
+  const exportTo = format(
+    new Date(monthEnd.getTime() - 24 * 60 * 60 * 1000),
+    "yyyy-MM-dd",
+  );
 
   // Month navigation dates
   const prevMonth = subMonths(monthStart, 1);
@@ -127,6 +133,51 @@ export default async function FinancePage({
           </Link>
         </div>
       </div>
+
+      <form
+        action="/api/financeiro/export"
+        method="get"
+        target="_blank"
+        className="premium-panel mb-6 grid gap-4 rounded-2xl p-4 lg:grid-cols-[150px_150px_1fr_auto]"
+      >
+        <Field label="De">
+          <Input name="from" type="date" defaultValue={exportFrom} />
+        </Field>
+        <Field label="Ate">
+          <Input name="to" type="date" defaultValue={exportTo} />
+        </Field>
+        <div className="grid gap-2">
+          <span className="ml-1 text-[13px] font-semibold uppercase tracking-wide text-muted-strong">
+            Dados do PDF
+          </span>
+          <div className="flex flex-wrap gap-2">
+            {[
+              ["client", "Cliente"],
+              ["service", "Servico"],
+              ["payment", "Pagamento"],
+              ["notes", "Observacoes"],
+            ].map(([value, label]) => (
+              <label
+                key={value}
+                className="surface-row flex h-12 items-center gap-2 rounded-lg px-3 text-sm font-medium text-foreground"
+              >
+                <input
+                  name="fields"
+                  value={value}
+                  type="checkbox"
+                  defaultChecked={value !== "notes"}
+                  className="h-4 w-4 accent-lilac-strong"
+                />
+                {label}
+              </label>
+            ))}
+          </div>
+        </div>
+        <Button type="submit" variant="secondary" className="self-end">
+          <FileDown size={16} />
+          Exportar PDF
+        </Button>
+      </form>
 
       <section className="grid gap-4 sm:gap-5 grid-cols-2 md:grid-cols-3">
         {/* Today Card - High contrast Mint */}

@@ -244,7 +244,7 @@ export default async function ClientDetailPage({
                           key={item.id}
                           className="border-border/70 bg-background/35 text-muted"
                         >
-                          {item.products?.name ?? "Produto"} x {item.quantity_used}
+                          {item.products?.name ?? "Produto"} x {item.quantity_used} {item.products?.unit ?? ""}
                         </Badge>
                       ))}
                     </div>

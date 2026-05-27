@@ -56,3 +56,13 @@ export const productCategories = [
   "Ferramenta",
   "Outro",
 ];
+
+export const productUnits = [
+  "un",
+  "ml",
+  "g",
+  "kg",
+  "L",
+  "dose",
+  "ampola",
+];

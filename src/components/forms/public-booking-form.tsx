@@ -7,6 +7,7 @@ import { SubmitButton } from "@/components/forms/submit-button";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Field, Input, Select, Textarea } from "@/components/ui/field";
+import { hairTypes, serviceFrequencies } from "@/lib/constants";
 import {
   initialActionState,
   type ActionState,
@@ -161,6 +162,45 @@ export function PublicBookingForm({
                 required
                 placeholder="(11) 99999-9999"
                 autoComplete="tel"
+              />
+            </Field>
+            <Field label="Data de nascimento">
+              <Input name="client_birth_date" type="date" />
+            </Field>
+            <Field label="Tipo de cabelo">
+              <Select name="client_hair_type" defaultValue="">
+                <option value="">Selecionar</option>
+                {hairTypes.map((type) => (
+                  <option key={type}>{type}</option>
+                ))}
+              </Select>
+            </Field>
+            <Field label="Frequencia de atendimento">
+              <Select name="client_service_frequency" defaultValue="">
+                <option value="">Selecionar</option>
+                {serviceFrequencies.map((frequency) => (
+                  <option key={frequency}>{frequency}</option>
+                ))}
+              </Select>
+            </Field>
+            <Field label="Preferencias">
+              <Input
+                name="client_preferences"
+                placeholder="Ex: escova lisa, tom dourado, pouco volume"
+              />
+            </Field>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Alergias ou sensibilidade">
+              <Textarea
+                name="client_allergies"
+                placeholder="Informe alergias, couro cabeludo sensivel ou restricoes."
+              />
+            </Field>
+            <Field label="Historico quimico">
+              <Textarea
+                name="client_chemical_history"
+                placeholder="Coloracao, progressiva, luzes, alisamentos ou tratamentos recentes."
               />
             </Field>
           </div>

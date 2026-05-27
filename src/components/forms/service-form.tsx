@@ -211,18 +211,23 @@ export function ServiceForm({
                         {product.name}
                       </span>
                       <span className="text-xs text-muted">
-                        {product.brand ?? "Sem marca"} • estoque {product.stock_quantity}
+                        {product.brand ?? "Sem marca"} • estoque {product.stock_quantity} {product.unit}
                       </span>
                     </span>
                   </span>
-                  <Input
-                    name={`quantity_${product.id}`}
-                    type="number"
-                    min={0}
-                    step="0.01"
-                    defaultValue={selected?.quantity_used ?? 1}
-                    aria-label={`Quantidade de ${product.name}`}
-                  />
+                  <div className="grid gap-1">
+                    <Input
+                      name={`quantity_${product.id}`}
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      defaultValue={selected?.quantity_used ?? 1}
+                      aria-label={`Quantidade de ${product.name}`}
+                    />
+                    <span className="text-center text-[11px] font-semibold text-muted">
+                      {product.unit}
+                    </span>
+                  </div>
                 </label>
               );
             })
