@@ -45,17 +45,17 @@ export function SidebarNav({ mobile = false }: { mobile?: boolean }) {
             href={item.href}
             className={cn(
               "group flex items-center gap-3 rounded-lg border px-3 py-2.5 text-sm font-medium transition",
-              mobile && "flex-col gap-1 px-1 py-2 text-[11px]",
+              mobile && "flex-col gap-1 px-1 py-1.5 text-[10px]",
               active
                 ? "border-lilac/35 bg-lilac/12 text-foreground shadow-sm shadow-lilac-strong/10"
                 : "border-transparent text-muted hover:border-border hover:bg-surface-raised/70 hover:text-foreground",
             )}
           >
             <Icon
-              size={mobile ? 18 : 17}
+              size={mobile ? 15 : 17}
               className={cn(active ? "text-lilac" : "text-muted")}
             />
-            <span className={mobile ? "truncate" : undefined}>{item.label}</span>
+            <span className={mobile ? "truncate w-full text-center" : undefined}>{item.label}</span>
           </Link>
         );
       })}

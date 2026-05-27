@@ -47,13 +47,15 @@ export function VeloraLogo({
   compact?: boolean;
   className?: string;
 }) {
+  if (compact) {
+    return <VeloraSymbol className={cn("h-10 w-10 shrink-0", className)} />;
+  }
+
   return (
     <div className={cn("flex items-center gap-3", className)}>
-      <VeloraSymbol className={compact ? "h-10 w-10" : "h-11 w-11"} />
-      <div className={compact ? "leading-tight" : undefined}>
-        <p className={cn("font-semibold text-foreground", compact ? "text-base" : "text-lg")}>
-          Velora
-        </p>
+      <VeloraSymbol className="h-11 w-11 shrink-0" />
+      <div>
+        <p className="font-semibold text-foreground text-lg">Velora</p>
         <p className="text-xs text-muted">Gestão de beleza</p>
       </div>
     </div>

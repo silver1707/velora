@@ -128,9 +128,9 @@ export default async function FinancePage({
         </div>
       </div>
 
-      <section className="grid gap-5 md:grid-cols-3">
+      <section className="grid gap-4 sm:gap-5 grid-cols-2 md:grid-cols-3">
         {/* Today Card - High contrast Mint */}
-        <article className={`premium-panel group rounded-2xl p-6 relative overflow-hidden transition-all duration-300 ${isCurrentMonth ? 'shadow-[0_0_30px_-15px_var(--mint)] border-mint/30' : 'opacity-60 grayscale'}`}>
+        <article className={`col-span-1 md:order-1 premium-panel group rounded-2xl p-4 sm:p-6 relative overflow-hidden transition-all duration-300 ${isCurrentMonth ? 'shadow-[0_0_30px_-15px_var(--mint)] border-mint/30' : 'opacity-60 grayscale'}`}>
           {isCurrentMonth && <div className="absolute top-0 right-0 p-4 opacity-10"><CircleDollarSign size={80} /></div>}
           <div className="absolute inset-0 bg-gradient-to-br from-mint/5 to-transparent pointer-events-none" />
           <p className="text-sm font-medium text-muted uppercase tracking-wider relative z-10">Total de Hoje</p>
@@ -143,7 +143,7 @@ export default async function FinancePage({
         </article>
 
         {/* Week Card - Subtle Gold */}
-        <article className="premium-panel group rounded-2xl p-6 relative overflow-hidden transition-all duration-300 hover:border-gold/30">
+        <article className="col-span-1 md:order-2 premium-panel group rounded-2xl p-4 sm:p-6 relative overflow-hidden transition-all duration-300 hover:border-gold/30">
           <div className="absolute inset-0 bg-gradient-to-br from-gold/5 to-transparent pointer-events-none" />
           <p className="text-sm font-medium text-muted uppercase tracking-wider relative z-10">Total da Semana</p>
           <strong className="mt-2 block text-4xl font-bold text-foreground tracking-tight relative z-10">
@@ -155,7 +155,7 @@ export default async function FinancePage({
         </article>
 
         {/* Month Card - Strong Lilac */}
-        <article className="premium-panel group rounded-2xl p-6 relative overflow-hidden transition-all duration-300 border-lilac/20 shadow-[0_0_20px_-10px_var(--lilac)]">
+        <article className="col-span-2 order-first md:order-3 md:col-span-1 premium-panel group rounded-2xl p-5 sm:p-6 relative overflow-hidden transition-all duration-300 border-lilac/20 shadow-[0_0_20px_-10px_var(--lilac)]">
           <div className="absolute inset-0 bg-gradient-to-br from-lilac-strong/10 to-transparent pointer-events-none" />
           <p className="text-sm font-medium text-muted uppercase tracking-wider relative z-10">Total do Mês</p>
           <strong className="mt-2 block text-4xl font-bold text-foreground tracking-tight relative z-10">

@@ -24,18 +24,18 @@ function MetricCard({
   detail: string;
 }) {
   return (
-    <article className="premium-panel overflow-hidden rounded-lg p-5">
-      <div className="brand-action mb-5 h-1 w-16 rounded-full" />
+    <article className="premium-panel overflow-hidden rounded-2xl p-4 sm:p-5 flex flex-col h-full">
+      <div className="brand-action mb-4 h-1 w-12 sm:w-16 rounded-full" />
       <div className="flex items-center justify-between gap-4">
-        <div className="brand-tile flex h-11 w-11 items-center justify-center rounded-lg text-lilac">
-          <Icon size={20} />
+        <div className="brand-tile flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-lg text-lilac">
+          <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
         </div>
       </div>
-      <p className="mt-5 text-sm text-muted">{label}</p>
-      <strong className="mt-1 block text-2xl font-semibold text-foreground">
+      <p className="mt-4 text-xs sm:text-sm text-muted line-clamp-1">{label}</p>
+      <strong className="mt-1 block text-lg sm:text-2xl font-semibold text-foreground truncate">
         {value}
       </strong>
-      <p className="mt-2 text-xs leading-5 text-muted">{detail}</p>
+      <p className="mt-2 text-[10px] sm:text-xs leading-snug text-muted line-clamp-2 sm:line-clamp-none flex-1">{detail}</p>
     </article>
   );
 }
@@ -51,7 +51,7 @@ export default async function DashboardPage() {
         description="Métricas rápidas para começar o dia sabendo agenda, receita e estoque."
       />
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         <MetricCard
           icon={UsersRound}
           label="Clientes cadastradas"
