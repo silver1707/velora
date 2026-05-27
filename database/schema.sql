@@ -18,6 +18,15 @@ create table if not exists public.profiles (
   full_name text,
   email text,
   business_name text,
+  business_headline text,
+  business_bio text,
+  specialties text,
+  address_text text,
+  instagram_url text,
+  profile_photo_url text,
+  cover_photo_url text,
+  booking_intro text,
+  booking_policy text,
   public_slug text,
   whatsapp_phone text,
   booking_enabled boolean not null default false,
@@ -26,6 +35,15 @@ create table if not exists public.profiles (
 );
 
 alter table public.profiles add column if not exists business_name text;
+alter table public.profiles add column if not exists business_headline text;
+alter table public.profiles add column if not exists business_bio text;
+alter table public.profiles add column if not exists specialties text;
+alter table public.profiles add column if not exists address_text text;
+alter table public.profiles add column if not exists instagram_url text;
+alter table public.profiles add column if not exists profile_photo_url text;
+alter table public.profiles add column if not exists cover_photo_url text;
+alter table public.profiles add column if not exists booking_intro text;
+alter table public.profiles add column if not exists booking_policy text;
 alter table public.profiles add column if not exists public_slug text;
 alter table public.profiles add column if not exists whatsapp_phone text;
 alter table public.profiles add column if not exists booking_enabled boolean not null default false;
@@ -347,6 +365,15 @@ returns table (
   id uuid,
   full_name text,
   business_name text,
+  business_headline text,
+  business_bio text,
+  specialties text,
+  address_text text,
+  instagram_url text,
+  profile_photo_url text,
+  cover_photo_url text,
+  booking_intro text,
+  booking_policy text,
   whatsapp_phone text,
   public_slug text
 )
@@ -358,6 +385,15 @@ as $$
     profiles.id,
     profiles.full_name,
     profiles.business_name,
+    profiles.business_headline,
+    profiles.business_bio,
+    profiles.specialties,
+    profiles.address_text,
+    profiles.instagram_url,
+    profiles.profile_photo_url,
+    profiles.cover_photo_url,
+    profiles.booking_intro,
+    profiles.booking_policy,
     profiles.whatsapp_phone,
     profiles.public_slug
   from public.profiles
