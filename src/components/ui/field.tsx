@@ -23,10 +23,10 @@ export function Field({ label, hint, error, children }: FieldProps) {
 }
 
 export const inputClassName =
-  "h-11 w-full rounded-lg border border-border/75 bg-background/45 px-3 text-sm text-foreground outline-none transition placeholder:text-muted-strong focus:border-lilac/60 focus:bg-surface/85 focus:ring-2 focus:ring-lilac/15";
+  "h-12 w-full rounded-xl border border-border-soft bg-surface-raised/30 px-4 text-sm text-foreground outline-none shadow-inner backdrop-blur-sm transition-all duration-300 placeholder:text-muted focus:border-lilac/50 focus:bg-surface-raised/60 focus:ring-[3px] focus:ring-lilac/15";
 
 export const textareaClassName =
-  "min-h-24 w-full rounded-lg border border-border/75 bg-background/45 px-3 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-strong focus:border-lilac/60 focus:bg-surface/85 focus:ring-2 focus:ring-lilac/15";
+  "min-h-[120px] w-full rounded-xl border border-border-soft bg-surface-raised/30 px-4 py-4 text-sm text-foreground outline-none shadow-inner backdrop-blur-sm transition-all duration-300 placeholder:text-muted focus:border-lilac/50 focus:bg-surface-raised/60 focus:ring-[3px] focus:ring-lilac/15";
 
 export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input className={cn(inputClassName, props.className)} {...props} />;

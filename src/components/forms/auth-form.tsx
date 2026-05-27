@@ -66,42 +66,42 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
 
       {mode === "signup" ? (
         <Field label="Nome profissional">
-          <div className="relative">
-            <UserRound className="pointer-events-none absolute left-3 top-3 text-muted" size={17} />
+          <div className="relative group">
+            <UserRound className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted transition-colors group-focus-within:text-lilac" size={18} />
             <Input
               name="full_name"
               required
               minLength={2}
               placeholder="Ex.: Marina Alves"
-              className="pl-10"
+              className="pl-11"
             />
           </div>
         </Field>
       ) : null}
 
       <Field label="E-mail">
-        <div className="relative">
-          <Mail className="pointer-events-none absolute left-3 top-3 text-muted" size={17} />
+        <div className="relative group">
+          <Mail className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted transition-colors group-focus-within:text-lilac" size={18} />
           <Input
             name="email"
             type="email"
             required
             placeholder="voce@salao.com"
-            className="pl-10"
+            className="pl-11"
           />
         </div>
       </Field>
 
       <Field label="Senha">
-        <div className="relative">
-          <LockKeyhole className="pointer-events-none absolute left-3 top-3 text-muted" size={17} />
+        <div className="relative group">
+          <LockKeyhole className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted transition-colors group-focus-within:text-lilac" size={18} />
           <Input
             name="password"
             type="password"
             required
             minLength={6}
             placeholder="Mínimo 6 caracteres"
-            className="pl-10"
+            className="pl-11"
           />
         </div>
       </Field>
