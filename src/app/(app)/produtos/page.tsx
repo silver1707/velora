@@ -1,4 +1,5 @@
-import { PackagePlus, Search, SlidersHorizontal } from "lucide-react";
+import { PackagePlus, Search, SlidersHorizontal, Trash2, Plus as PlusIcon, Minus as MinusIcon } from "lucide-react";
+import Form from "next/form";
 import { ProductForm } from "@/components/forms/product-form";
 import { QuickActionForm } from "@/components/forms/quick-action-form";
 import { PageHeader } from "@/components/layout/page-header";
@@ -9,7 +10,7 @@ import { Input, Select } from "@/components/ui/field";
 import { Pagination } from "@/components/ui/pagination";
 import { Sheet } from "@/components/ui/sheet";
 import { currency } from "@/lib/utils";
-import { deleteProductAction } from "@/server/actions/products";
+import { deleteProductAction, quickUpdateStockAction } from "@/server/actions/products";
 import { getProductsPage } from "@/server/queries";
 
 export default async function ProductsPage({
@@ -47,87 +48,113 @@ export default async function ProductsPage({
         }
       />
 
-      <form className="toolbar-panel mb-5 grid gap-3 rounded-lg p-3 md:grid-cols-[1fr_180px_auto]">
-        <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-3 text-muted" size={17} />
+      <Form action="/produtos" className="premium-panel mb-8 grid gap-4 rounded-2xl p-4 md:grid-cols-[1fr_180px_auto] items-center shadow-lg">
+        <div className="relative group">
+          <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted transition-colors group-focus-within:text-lilac" size={18} />
           <Input
             name="busca"
             defaultValue={params.busca ?? ""}
             placeholder="Buscar por nome, marca ou categoria"
-            className="pl-10"
+            className="pl-11 border-transparent bg-background/50 hover:border-lilac/30"
           />
         </div>
-        <Select name="baixo" defaultValue={params.baixo ?? ""}>
+        <Select name="baixo" defaultValue={params.baixo ?? ""} className="border-transparent bg-background/50 hover:border-lilac/30">
           <option value="">Todos</option>
           <option value="true">Estoque baixo</option>
         </Select>
-        <Button type="submit" variant="secondary">
+        <Button type="submit" variant="primary" className="h-12">
           <SlidersHorizontal size={16} />
           Filtrar
         </Button>
-      </form>
+      </Form>
 
       {products.length ? (
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {products.map((product) => {
             const low =
               product.is_running_low ||
               Number(product.stock_quantity) <= Number(product.low_stock_threshold);
+            
+            const cardClasses = low
+              ? "border-danger/30 shadow-[0_0_20px_-10px_var(--danger)] hover:border-danger/60"
+              : "hover:border-lilac/40 hover:shadow-[0_0_30px_-15px_var(--lilac)]";
+
             return (
-              <article key={product.id} className="premium-panel rounded-lg p-5">
+              <article key={product.id} className={`premium-panel group rounded-2xl p-6 transition-all duration-300 ${cardClasses}`}>
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h2 className="text-lg font-semibold text-foreground">
+                    <h2 className="text-xl font-bold text-foreground">
                       {product.name}
                     </h2>
-                    <p className="mt-1 text-sm text-muted">
+                    <p className="mt-1 text-sm text-muted font-medium">
                       {product.brand || "Sem marca"} • {product.category || "Sem categoria"}
                     </p>
                   </div>
                   {low ? (
-                    <Badge className="border-gold/30 bg-gold/10 text-gold">
+                    <Badge className="border-danger/30 bg-danger/10 text-danger animate-pulse">
                       Acabando
                     </Badge>
                   ) : null}
                 </div>
 
-                <dl className="mt-5 grid grid-cols-3 gap-3 text-sm">
+                <div className="mt-6 flex items-center justify-between rounded-xl border border-border-soft bg-background/30 p-4">
                   <div>
-                    <dt className="text-muted">Estoque</dt>
-                    <dd className="mt-1 text-foreground">{product.stock_quantity}</dd>
+                    <p className="text-xs uppercase tracking-wider text-muted mb-1">Estoque Atual</p>
+                    <p className={`text-2xl font-bold ${low ? "text-danger" : "text-foreground"}`}>
+                      {product.stock_quantity} <span className="text-sm font-medium text-muted">un</span>
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <QuickActionForm
+                      action={quickUpdateStockAction}
+                      fields={{ id: product.id, operation: "decrement" }}
+                      label={<MinusIcon size={18} />}
+                      variant="secondary"
+                      className="!h-10 !w-10 !p-0 rounded-lg flex items-center justify-center hover:bg-danger/20 hover:text-danger hover:border-danger/50"
+                    />
+                    <QuickActionForm
+                      action={quickUpdateStockAction}
+                      fields={{ id: product.id, operation: "increment" }}
+                      label={<PlusIcon size={18} />}
+                      variant="secondary"
+                      className="!h-10 !w-10 !p-0 rounded-lg flex items-center justify-center hover:bg-mint/20 hover:text-mint hover:border-mint/50"
+                    />
+                  </div>
+                </div>
+
+                <dl className="mt-4 grid grid-cols-2 gap-3 text-sm px-2">
+                  <div>
+                    <dt className="text-muted text-xs uppercase tracking-wider mb-0.5">Mínimo</dt>
+                    <dd className="font-medium text-foreground">{product.low_stock_threshold}</dd>
                   </div>
                   <div>
-                    <dt className="text-muted">Mínimo</dt>
-                    <dd className="mt-1 text-foreground">{product.low_stock_threshold}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted">Custo</dt>
-                    <dd className="mt-1 text-foreground">{currency(product.cost)}</dd>
+                    <dt className="text-muted text-xs uppercase tracking-wider mb-0.5">Custo</dt>
+                    <dd className="font-medium text-foreground">{currency(product.cost)}</dd>
                   </div>
                 </dl>
 
                 {product.notes ? (
-                  <p className="mt-4 line-clamp-3 text-sm leading-6 text-muted">
+                  <p className="mt-4 line-clamp-2 text-sm text-muted px-2 border-l-2 border-lilac/30">
                     {product.notes}
                   </p>
                 ) : null}
 
-                <div className="mt-5 flex flex-wrap gap-2">
+                <div className="mt-6 flex flex-wrap items-center justify-between gap-2 pt-4 border-t border-border-soft">
                   <Sheet
                     title={`Editar ${product.name}`}
-                    trigger={<Button variant="secondary">Editar</Button>}
+                    trigger={<Button variant="secondary" size="sm">Editar Produto</Button>}
                   >
                     <ProductForm product={product} />
                   </Sheet>
-                  <div className="min-w-36">
-                    <QuickActionForm
-                      action={deleteProductAction}
-                      fields={{ id: product.id }}
-                      label="Excluir"
-                      variant="danger"
-                      confirmMessage="Excluir este produto?"
-                    />
-                  </div>
+                  
+                  <QuickActionForm
+                    action={deleteProductAction}
+                    fields={{ id: product.id }}
+                    label={<Trash2 size={16} />}
+                    variant="danger"
+                    confirmMessage={`Excluir ${product.name}?`}
+                  />
                 </div>
               </article>
             );
@@ -139,13 +166,15 @@ export default async function ProductsPage({
           description="Cadastre produtos para relacionar aos serviços e acompanhar estoque."
         />
       )}
-      <Pagination
-        basePath="/produtos"
-        page={productsPage.page}
-        totalPages={productsPage.totalPages}
-        total={productsPage.total}
-        params={{ busca: params.busca, baixo: params.baixo }}
-      />
+      <div className="mt-8">
+        <Pagination
+          basePath="/produtos"
+          page={productsPage.page}
+          totalPages={productsPage.totalPages}
+          total={productsPage.total}
+          params={{ busca: params.busca, baixo: params.baixo }}
+        />
+      </div>
     </>
   );
 }

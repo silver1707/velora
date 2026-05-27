@@ -100,3 +100,49 @@ export async function deleteProductAction(
   revalidatePath("/dashboard");
   return actionSuccess("Produto excluído.");
 }
+
+export async function quickUpdateStockAction(
+  _state: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const id = formData.get("id") as string;
+  const operation = formData.get("operation") as "increment" | "decrement";
+
+  if (!id || !operation) {
+    return actionFailure("Parâmetros inválidos.");
+  }
+
+  const context = await getActionContext();
+  if (isActionState(context)) {
+    return context;
+  }
+
+  const { supabase } = context;
+  
+  // First get current stock
+  const { data: product, error: fetchError } = await supabase
+    .from("products")
+    .select("stock_quantity")
+    .eq("id", id)
+    .single();
+
+  if (fetchError || !product) {
+    return actionFailure("Produto não encontrado.");
+  }
+
+  const currentStock = Number(product.stock_quantity);
+  const newStock = operation === "increment" ? currentStock + 1 : Math.max(0, currentStock - 1);
+
+  const { error: updateError } = await supabase
+    .from("products")
+    .update({ stock_quantity: newStock, updated_at: new Date().toISOString() })
+    .eq("id", id);
+
+  if (updateError) {
+    return actionFailure(updateError.message);
+  }
+
+  revalidatePath("/produtos");
+  revalidatePath("/dashboard");
+  return actionSuccess(operation === "increment" ? "Estoque +1." : "Estoque -1.");
+}
