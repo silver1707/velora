@@ -1,6 +1,11 @@
+import { useId } from "react";
 import { cn } from "@/lib/utils";
 
 export function VeloraSymbol({ className }: { className?: string }) {
+  const id = useId();
+  const leftWingId = `left-wing-${id}`;
+  const rightWingId = `right-wing-${id}`;
+
   return (
     <span
       className={cn(
@@ -16,22 +21,22 @@ export function VeloraSymbol({ className }: { className?: string }) {
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <linearGradient id="left-wing" x1="100%" y1="100%" x2="0%" y2="0%">
+          <linearGradient id={leftWingId} x1="100%" y1="100%" x2="0%" y2="0%">
             <stop offset="0%" stopColor="var(--lilac-deep)" />
             <stop offset="100%" stopColor="var(--lilac-strong)" />
           </linearGradient>
-          <linearGradient id="right-wing" x1="0%" y1="100%" x2="100%" y2="0%">
+          <linearGradient id={rightWingId} x1="0%" y1="100%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="var(--rose)" />
             <stop offset="100%" stopColor="var(--gold)" />
           </linearGradient>
         </defs>
         <path
           d="M32 50L14 14H24L32 34L40 14H50L32 50Z"
-          fill="url(#left-wing)"
+          fill={`url(#${leftWingId})`}
         />
         <path
           d="M32 50L40 14H50L32 50Z"
-          fill="url(#right-wing)"
+          fill={`url(#${rightWingId})`}
           opacity="0.9"
         />
         <circle cx="32" cy="50" r="3" fill="var(--foreground)" />
