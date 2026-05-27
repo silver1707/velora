@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, LockKeyhole, Mail, UserRound } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useMemo, useState } from "react";
 import Link from "next/link";
@@ -56,7 +56,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-4">
+    <form onSubmit={onSubmit} className="grid gap-5">
       {!hasSupabaseConfig ? (
         <div className="rounded-lg border border-gold/30 bg-gold/10 p-3 text-sm leading-6 text-gold">
           Preencha o `.env.local` com as chaves do Supabase antes de usar login,
@@ -65,45 +65,33 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       ) : null}
 
       {mode === "signup" ? (
-        <Field label="Nome profissional">
-          <div className="relative group">
-            <UserRound className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted transition-colors group-focus-within:text-lilac" size={18} />
-            <Input
-              name="full_name"
-              required
-              minLength={2}
-              placeholder="Ex.: Marina Alves"
-              className="pl-11"
-            />
-          </div>
+        <Field label="Nome completo">
+          <Input
+            name="full_name"
+            required
+            minLength={2}
+            placeholder="Marina Alves"
+          />
         </Field>
       ) : null}
 
-      <Field label="E-mail">
-        <div className="relative group">
-          <Mail className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted transition-colors group-focus-within:text-lilac" size={18} />
-          <Input
-            name="email"
-            type="email"
-            required
-            placeholder="voce@salao.com"
-            className="pl-11"
-          />
-        </div>
+      <Field label="E-mail profissional">
+        <Input
+          name="email"
+          type="email"
+          required
+          placeholder="marina@salao.com.br"
+        />
       </Field>
 
       <Field label="Senha">
-        <div className="relative group">
-          <LockKeyhole className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted transition-colors group-focus-within:text-lilac" size={18} />
-          <Input
-            name="password"
-            type="password"
-            required
-            minLength={6}
-            placeholder="Mínimo 6 caracteres"
-            className="pl-11"
-          />
-        </div>
+        <Input
+          name="password"
+          type="password"
+          required
+          minLength={6}
+          placeholder="••••••••"
+        />
       </Field>
 
       {message ? (
@@ -112,18 +100,18 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         </div>
       ) : null}
 
-      <Button type="submit" disabled={loading} className="w-full">
-        {loading ? <Loader2 size={16} className="animate-spin" /> : null}
-        {mode === "login" ? "Entrar" : "Criar conta"}
+      <Button type="submit" disabled={loading} className="w-full mt-2 h-12 text-[15px]">
+        {loading ? <Loader2 size={18} className="animate-spin mr-2" /> : null}
+        {mode === "login" ? "Entrar na minha conta" : "Criar minha conta"}
       </Button>
 
-      <p className="text-center text-sm text-muted">
+      <p className="mt-4 text-center text-[15px] text-muted">
         {mode === "login" ? "Ainda não tem conta?" : "Já tem conta?"}{" "}
         <Link
           href={mode === "login" ? "/cadastro" : "/login"}
-          className="font-medium text-lilac hover:text-foreground"
+          className="font-semibold text-lilac hover:text-lilac-strong transition-colors"
         >
-          {mode === "login" ? "Criar cadastro" : "Entrar"}
+          {mode === "login" ? "Criar cadastro" : "Entrar agora"}
         </Link>
       </p>
     </form>
