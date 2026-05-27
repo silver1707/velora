@@ -1,26 +1,177 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #050207;
+  --foreground: #fff9ff;
+  --surface: #0c0711;
+  --surface-soft: #140d1c;
+  --surface-raised: #1b1226;
+  --surface-glow: #261634;
+  --border: #342442;
+  --border-soft: #24172f;
+  --muted: #b8a7c9;
+  --muted-strong: #907ca4;
+  --lilac: #d7bdff;
+  --lilac-strong: #a866ff;
+  --lilac-deep: #6d35cf;
+  --rose: #efa5c8;
+  --mint: #91d9bd;
+  --gold: #e7cc7d;
+  --danger: #f08aa9;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-soft: var(--surface-soft);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-glow: var(--surface-glow);
+  --color-border: var(--border);
+  --color-border-soft: var(--border-soft);
+  --color-muted: var(--muted);
+  --color-muted-strong: var(--muted-strong);
+  --color-lilac: var(--lilac);
+  --color-lilac-strong: var(--lilac-strong);
+  --color-lilac-deep: var(--lilac-deep);
+  --color-rose: var(--rose);
+  --color-mint: var(--mint);
+  --color-gold: var(--gold);
+  --color-danger: var(--danger);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+  letter-spacing: 0;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--lilac-strong) 55%, transparent);
+  color: var(--foreground);
+}
+
+.velora-shell {
+  isolation: isolate;
+  position: relative;
+  background:
+    linear-gradient(115deg, color-mix(in srgb, var(--lilac-deep) 18%, transparent), transparent 38%),
+    linear-gradient(180deg, color-mix(in srgb, var(--rose) 8%, transparent), transparent 32%),
+    linear-gradient(0deg, color-mix(in srgb, var(--surface-glow) 55%, transparent), transparent 72%),
+    var(--background);
+}
+
+.velora-shell::before {
+  background:
+    linear-gradient(color-mix(in srgb, var(--lilac) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--lilac) 6%, transparent) 1px, transparent 1px);
+  background-size: 44px 44px;
+  content: "";
+  inset: 0;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.54), transparent 62%);
+  pointer-events: none;
+  position: fixed;
+  z-index: -1;
+}
+
+.premium-panel {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-raised) 92%, transparent), color-mix(in srgb, var(--surface) 96%, transparent)),
+    linear-gradient(120deg, color-mix(in srgb, var(--lilac) 7%, transparent), transparent 42%);
+  border: 1px solid color-mix(in srgb, var(--lilac) 18%, var(--border-soft));
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 color-mix(in srgb, var(--foreground) 5%, transparent);
+}
+
+.auth-card {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-raised) 90%, transparent), color-mix(in srgb, var(--surface) 96%, transparent)),
+    linear-gradient(135deg, color-mix(in srgb, var(--lilac-deep) 12%, transparent), transparent 44%);
+  border: 1px solid color-mix(in srgb, var(--lilac) 22%, var(--border-soft));
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.46),
+    0 0 0 1px color-mix(in srgb, var(--foreground) 3%, transparent) inset;
+}
+
+.toolbar-panel {
+  background: color-mix(in srgb, var(--surface-soft) 82%, transparent);
+  border: 1px solid color-mix(in srgb, var(--lilac) 14%, var(--border-soft));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--foreground) 4%, transparent);
+}
+
+.surface-row {
+  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--lilac) 10%, var(--border-soft));
+}
+
+.brand-tile {
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--lilac-strong) 27%, var(--surface-raised)), color-mix(in srgb, var(--surface-glow) 86%, transparent));
+  border: 1px solid color-mix(in srgb, var(--lilac) 28%, var(--border));
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--lilac-strong) 14%, transparent);
+}
+
+.brand-action {
+  background-color: var(--lilac-strong);
+  background-image: linear-gradient(135deg, var(--lilac-strong), var(--lilac-deep));
+}
+
+.select-chevron {
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--lilac) 50%),
+    linear-gradient(135deg, var(--lilac) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 18px,
+    calc(100% - 13px) 18px;
+  background-repeat: no-repeat;
+  background-size:
+    5px 5px,
+    5px 5px;
+}
+
+.soft-divider {
+  border-color: color-mix(in srgb, var(--lilac) 12%, var(--border-soft));
+}
+
+.scrollbar-soft {
+  scrollbar-color: color-mix(in srgb, var(--lilac) 36%, transparent) color-mix(in srgb, var(--surface-raised) 70%, transparent);
+  scrollbar-width: thin;
+}
+
+.scrollbar-soft::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.scrollbar-soft::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--lilac) 36%, transparent);
+  border-radius: 999px;
+}
+
+.scrollbar-soft::-webkit-scrollbar-track {
+  background: color-mix(in srgb, var(--surface-raised) 70%, transparent);
 }
