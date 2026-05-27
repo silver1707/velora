@@ -59,17 +59,6 @@ export default function LoginPage() {
                 <VeloraSymbol className="h-12 w-12 drop-shadow-[0_0_15px_var(--lilac-strong)]" />
               </div>
             </div>
-            
-            {/* Floating glass cards */}
-            <div className="absolute top-[20%] right-[10%] flex items-center gap-3 rounded-2xl border border-border-soft bg-surface/60 backdrop-blur-xl px-5 py-3 shadow-2xl animate-[float_6s_ease-in-out_infinite] delay-300">
-              <div className="h-2 w-2 rounded-full bg-mint shadow-[0_0_8px_var(--mint)]" />
-              <span className="text-xs font-semibold text-foreground">Ana Clara confirmada</span>
-            </div>
-            
-            <div className="absolute bottom-[25%] left-[5%] flex items-center gap-3 rounded-2xl border border-border-soft bg-surface/60 backdrop-blur-xl px-5 py-3 shadow-2xl animate-[float-reverse_8s_ease-in-out_infinite]">
-              <div className="h-2 w-2 rounded-full bg-lilac shadow-[0_0_8px_var(--lilac)]" />
-              <span className="text-xs font-semibold text-foreground">+ R$ 380,00</span>
-            </div>
           </div>
         </div>
 
