@@ -134,55 +134,89 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
 }
 
 function AnimatedHeroGraphic() {
+  const appointments = [
+    { time: "14:00", name: "Ana Clara", service: "Mechas e Corte", dotClass: "bg-lilac" },
+    { time: "16:30", name: "Juliana Silva", service: "Progressiva", dotClass: "bg-rose" },
+    { time: "18:00", name: "Marcela", service: "Manutenção", dotClass: "bg-mint" }
+  ];
+
   return (
-    <div className="absolute inset-y-0 right-0 hidden w-[55%] lg:block pointer-events-none">
-      {/* Glows */}
-      <div className="absolute top-[20%] right-[20%] h-72 w-72 animate-pulse rounded-full bg-lilac-strong/20 blur-[100px] delay-700" />
-      <div className="absolute top-[50%] right-[10%] h-64 w-64 animate-pulse rounded-full bg-rose/15 blur-[80px]" />
+    <div className="absolute inset-y-0 right-0 hidden w-[55%] lg:flex items-center justify-center pointer-events-none" style={{ perspective: '1200px' }}>
+      {/* Massive Glowing Aura behind the Mockup */}
+      <div className="absolute top-1/2 right-1/4 h-[500px] w-[500px] -translate-y-1/2 animate-[spin_15s_linear_infinite] rounded-full bg-[conic-gradient(from_0deg,var(--lilac-deep)_0%,var(--rose)_30%,var(--mint)_60%,var(--lilac-strong)_90%,var(--lilac-deep)_100%)] opacity-30 blur-[90px]" />
       
-      {/* Floating UI Elements */}
-      <div className="absolute right-[10%] top-[25%] flex w-80 flex-col gap-6">
-        {/* Card 1 */}
-        <div 
-          className="premium-panel flex items-center gap-4 rounded-xl p-4 shadow-2xl backdrop-blur-md"
-          style={{ animation: 'float 6s ease-in-out infinite' }}
-        >
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-lilac/10 text-lilac">
-            <CalendarDays size={22} />
+      {/* 3D Glass Phone Mockup Container */}
+      <div 
+        className="relative h-[650px] w-[320px] rounded-[3rem] bg-surface-soft/60 shadow-2xl backdrop-blur-3xl"
+        style={{ 
+          transform: 'rotateY(-20deg) rotateX(15deg) rotateZ(-5deg) scale(1.05)',
+          boxShadow: '-40px 50px 100px -20px rgba(0,0,0,0.8), inset 0 0 0 1px color-mix(in srgb, var(--lilac) 20%, transparent), inset 0 2px 20px color-mix(in srgb, var(--foreground) 10%, transparent)',
+          animation: 'float 8s ease-in-out infinite'
+        }}
+      >
+        {/* Dynamic Notch */}
+        <div className="absolute top-3 inset-x-0 mx-auto h-6 w-1/3 rounded-full bg-background shadow-inner" />
+
+        {/* Interface Content Container */}
+        <div className="flex h-full flex-col px-5 pt-16 pb-8 gap-5 overflow-hidden">
+          
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[11px] font-medium text-muted uppercase tracking-wider">Bom dia,</p>
+              <p className="text-base font-semibold text-foreground">Amanda Salão</p>
+            </div>
+            <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-lilac-strong to-rose p-[2px] shadow-lg">
+              <div className="h-full w-full rounded-full bg-surface-raised border-2 border-transparent" />
+            </div>
           </div>
-          <div>
-            <p className="text-sm font-semibold text-foreground">Ana Silva</p>
-            <p className="text-xs text-muted">Coloração e Corte • 14:00</p>
+
+          {/* Revenue Card */}
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface-raised to-surface p-5 border border-border-soft shadow-xl">
+            <p className="text-[11px] uppercase tracking-wider text-muted font-medium">Faturamento hoje</p>
+            <p className="mt-1 text-2xl font-bold text-foreground">R$ 1.250<span className="text-sm font-normal text-mint">,00</span></p>
+            <div className="mt-3 flex items-center gap-1.5 text-xs text-mint font-medium">
+              <ArrowRight size={14} className="-rotate-45" />
+              <span>+15% em relação a ontem</span>
+            </div>
+            {/* Background Glow in Card */}
+            <div className="absolute -bottom-6 -right-6 h-32 w-32 rounded-full bg-mint/15 blur-2xl" />
+          </div>
+
+          {/* Appointments */}
+          <div className="mt-2 flex-1 flex flex-col">
+            <div className="mb-3 flex items-center justify-between">
+              <p className="text-sm font-semibold text-foreground">Próximos clientes</p>
+            </div>
+            
+            <div className="flex flex-col gap-3">
+              {appointments.map((apt, i) => (
+                <div key={i} className="group relative flex items-center gap-4 rounded-2xl bg-background/40 p-3 border border-border-soft transition hover:bg-surface-glow/20">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-surface-raised border border-border-soft text-foreground text-xs font-semibold shadow-inner">
+                    {apt.time}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-[13px] font-semibold text-foreground">{apt.name}</p>
+                    <p className="text-[11px] text-muted font-medium mt-0.5">{apt.service}</p>
+                  </div>
+                  {/* Subtle color accent */}
+                  <div className={`absolute left-0 top-1/2 -translate-y-1/2 h-1/2 w-1 rounded-r-full ${apt.dotClass} opacity-70`} />
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Mock Bottom Nav */}
+          <div className="mt-auto h-12 w-full rounded-2xl bg-background/50 border border-border-soft flex items-center justify-around px-2 shadow-inner">
+             <div className="h-6 w-6 rounded-md bg-lilac/20" />
+             <div className="h-6 w-6 rounded-md bg-surface-raised" />
+             <div className="h-6 w-6 rounded-md bg-surface-raised" />
+             <div className="h-6 w-6 rounded-md bg-surface-raised" />
           </div>
         </div>
 
-        {/* Card 2 */}
-        <div 
-          className="premium-panel flex items-center gap-4 rounded-xl p-4 shadow-2xl backdrop-blur-md -translate-x-12"
-          style={{ animation: 'float-reverse 8s ease-in-out infinite' }}
-        >
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-mint/10 text-mint">
-            <CircleDollarSign size={22} />
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-foreground">Pagamento aprovado</p>
-            <p className="text-xs text-muted">+ R$ 380,00 via PIX</p>
-          </div>
-        </div>
-
-        {/* Card 3 */}
-        <div 
-          className="premium-panel flex items-center gap-4 rounded-xl p-4 shadow-2xl backdrop-blur-md translate-x-4"
-          style={{ animation: 'float 7s ease-in-out infinite 2s' }}
-        >
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose/10 text-rose">
-            <Package size={22} />
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-foreground">Estoque atualizado</p>
-            <p className="text-xs text-muted">Tinta 8.0 vinculada ao serviço</p>
-          </div>
-        </div>
+        {/* Front Shine Overlay for Glassmorphism */}
+        <div className="absolute inset-0 rounded-[3rem] bg-gradient-to-tr from-transparent via-white/[0.04] to-transparent pointer-events-none" />
       </div>
     </div>
   );
