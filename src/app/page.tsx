@@ -62,7 +62,7 @@ export default function LandingPage() {
               {workflow.map((item, index) => {
                 const Icon = item.icon;
                 return (
-                  <article key={item.title} className="premium-panel grid gap-4 rounded-lg p-5 sm:grid-cols-[54px_1fr] transition hover:scale-[1.02]">
+                  <article key={item.title} className="premium-panel grid gap-4 rounded-lg p-5 sm:grid-cols-[54px_1fr] transition">
                     <div className="brand-tile flex h-12 w-12 items-center justify-center rounded-lg text-lilac">
                       <Icon size={20} />
                     </div>

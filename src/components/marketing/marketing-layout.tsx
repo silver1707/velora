@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { VeloraLogo } from "@/components/brand/velora-logo";
+import { VeloraLogo, VeloraSymbol } from "@/components/brand/velora-logo";
 import { LinkButton } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -104,7 +104,7 @@ export function MarketingFooter() {
             </p>
           </div>
           <p className="mt-4 max-w-xl text-sm leading-6 text-muted">
-            Feito para profissionais autônomas que querem agenda, histórico técnico,
+            Feito para cabeleireiras que querem agenda, histórico técnico,
             estoque e financeiro em uma experiência simples de usar no celular.
           </p>
         </div>
@@ -148,7 +148,7 @@ function AnimatedHeroGraphic() {
         {/* Central Salon Emblem */}
         <div className="relative z-10 flex h-36 w-36 items-center justify-center rounded-full bg-gradient-to-br from-surface-raised to-surface shadow-[0_0_80px_-20px_var(--lilac-strong)] border border-lilac/20 backdrop-blur-xl animate-[float_6s_ease-in-out_infinite]">
           <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_top_left,var(--lilac-strong)_0%,transparent_50%)] opacity-20" />
-          <Scissors className="h-14 w-14 text-foreground drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" strokeWidth={1.5} />
+          <VeloraSymbol className="h-16 w-16 drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]" />
         </div>
 
         {/* Outer Ring Satellite (600px) */}

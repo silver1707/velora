@@ -57,7 +57,7 @@ export default function ResourcesPage() {
           <div className="relative z-10 mx-auto max-w-7xl">
             <SectionIntro
               title="Tudo que você precisa para atender com memória e método."
-              description="Velora não tenta virar um sistema complicado. Ele concentra o essencial para uma cabeleireira autônoma: relacionamento, agenda, serviços, produtos e dinheiro recebido."
+              description="Velora não tenta virar um sistema complicado. Ele concentra o essencial para a cabeleireira: relacionamento, agenda, serviços, produtos e dinheiro recebido."
               centered
             />
           </div>
@@ -68,7 +68,7 @@ export default function ResourcesPage() {
             {deepFeatures.map((feature) => {
               const Icon = feature.icon;
               return (
-                <article key={feature.title} className="premium-panel group relative rounded-2xl p-6 transition duration-300 hover:scale-[1.02] hover:shadow-2xl">
+                <article key={feature.title} className="premium-panel group relative rounded-2xl p-6 transition duration-300 hover:shadow-2xl">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-lilac/10 text-lilac">
                     <Icon size={22} />
                   </div>
