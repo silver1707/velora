@@ -36,21 +36,28 @@ const workflow = [
 export default function LandingPage() {
   return (
     <MarketingShell>
-      <main className="flex flex-col">
+      <main className="flex flex-col gap-12 sm:gap-24 pb-20">
         <HeroSection />
 
-        {/* Produto Section without title/cards, connected fluidly */}
-        <section className="relative px-4 py-16 sm:px-6 lg:px-8 animate-fade-in-up delay-400">
-          <div className="absolute inset-x-0 -top-32 h-32 bg-[linear-gradient(180deg,transparent,var(--background))]" />
+        <section className="relative px-4 sm:px-6 lg:px-8 animate-fade-in-up delay-400">
           <div className="mx-auto max-w-7xl">
-            <FeatureGrid className="mt-6" />
+            <SectionIntro
+              eyebrow="Organização"
+              title="Um sistema que entende a rotina do salão."
+              description="Reúna o que costuma ficar espalhado: mensagens, anotações, agenda, produtos e recebimentos, em uma experiência rápida e feita para o celular."
+              centered
+            />
+            <FeatureGrid className="mt-10" />
           </div>
         </section>
 
-        {/* Fluxo Diário Section */}
-        <section className="relative px-4 py-16 sm:px-6 lg:px-8 animate-fade-in-up delay-500">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,color-mix(in_srgb,var(--lilac-deep)_5%,transparent),transparent_70%)] pointer-events-none" />
-          <div className="relative z-10 mx-auto max-w-3xl">
+        <section className="relative px-4 sm:px-6 lg:px-8 animate-fade-in-up delay-500">
+          <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+            <SectionIntro
+              eyebrow="Praticidade"
+              title="Da cliente ao financeiro, sem retrabalho."
+              description="Cada ação alimenta a próxima: ao concluir um atendimento, o histórico fica salvo e o financeiro recebe o valor automaticamente."
+            />
             <div className="grid gap-4">
               {workflow.map((item, index) => {
                 const Icon = item.icon;
@@ -75,15 +82,13 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Diferenciais Section */}
-        <section className="relative px-4 py-16 sm:px-6 lg:px-8">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,color-mix(in_srgb,var(--rose)_4%,transparent),transparent_60%)] pointer-events-none" />
-          <div className="relative z-10 mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
+        <section className="relative px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
             {[
               {
                 icon: Smartphone,
                 title: "Mobile primeiro",
-                text: "Cards, drawers e botões foram desenhados para funcionar bem na mão.",
+                text: "Cards, botões e telas desenhados para funcionar perfeitamente na sua mão.",
               },
               {
                 icon: ShieldCheck,
@@ -110,7 +115,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <MarketingCta title="Tudo pronto para começar" description="Acesse pelo celular ou computador." />
+        <MarketingCta title="Tudo pronto para começar" description="Acesse pelo celular ou computador e transforme sua rotina." />
       </main>
     </MarketingShell>
   );
