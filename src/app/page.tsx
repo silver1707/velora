@@ -2,12 +2,12 @@ import {
   ArrowRight,
   CalendarCheck2,
   CheckCircle2,
-  ChevronDown,
   Clock3,
   ShieldCheck,
   Smartphone,
 } from "lucide-react";
 import type { Metadata } from "next";
+import { FaqAccordion } from "@/components/marketing/faq-accordion";
 import { FeatureGrid, HeroSection, MarketingCta, MarketingShell, SectionIntro } from "@/components/marketing/marketing-layout";
 
 export const metadata: Metadata = {
@@ -77,30 +77,29 @@ export default function LandingPage() {
         <section className="relative px-4 sm:px-6 lg:px-8 animate-fade-in-up delay-500">
           <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
             <SectionIntro
-              eyebrow="Praticidade"
               title="Da cliente ao financeiro, sem retrabalho."
               description="Cada ação alimenta a próxima: ao concluir um atendimento, o histórico fica salvo e o financeiro recebe o valor automaticamente."
             />
             <div className="relative">
               {/* Vertical timeline line */}
-              <div className="absolute left-[35px] top-4 bottom-4 w-px bg-gradient-to-b from-lilac-strong/50 via-lilac/20 to-transparent hidden sm:block" />
+              <div className="absolute left-[42px] top-6 bottom-6 w-px bg-gradient-to-b from-lilac-strong/50 via-lilac/20 to-transparent hidden sm:block" />
               
-              <div className="grid gap-6 sm:gap-8">
+              <div className="grid gap-7 sm:gap-9">
                 {workflow.map((item, index) => {
                   const Icon = item.icon;
                   return (
-                    <article key={item.title} className="relative grid gap-4 rounded-2xl sm:grid-cols-[70px_1fr] transition">
-                      <div className="brand-tile relative z-10 flex h-14 w-14 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-2xl text-lilac shadow-lg">
-                        <Icon size={24} />
+                    <article key={item.title} className="relative grid gap-5 rounded-2xl sm:grid-cols-[84px_1fr] transition">
+                      <div className="brand-tile relative z-10 flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-lilac shadow-lg sm:h-20 sm:w-20">
+                        <Icon size={30} />
                       </div>
-                      <div className="premium-panel sm:bg-transparent sm:border-none sm:shadow-none sm:p-0 rounded-2xl p-6">
-                        <p className="text-xs font-bold uppercase tracking-wider text-lilac">
-                          Passo {index + 1}
-                        </p>
-                        <h3 className="mt-2 text-xl font-bold text-foreground">
+                      <div className="premium-panel rounded-2xl p-7 sm:p-8">
+                        <span className="inline-flex h-8 min-w-8 items-center justify-center rounded-lg border border-lilac/20 bg-lilac/10 px-2 text-sm font-bold text-lilac">
+                          {index + 1}
+                        </span>
+                        <h3 className="mt-4 text-2xl font-bold text-foreground">
                           {item.title}
                         </h3>
-                        <p className="mt-2 text-sm leading-relaxed text-muted">{item.text}</p>
+                        <p className="mt-3 text-base leading-7 text-muted">{item.text}</p>
                       </div>
                     </article>
                   );
@@ -148,27 +147,10 @@ export default function LandingPage() {
         <section className="relative px-4 sm:px-6 lg:px-8">
           <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.8fr_1.2fr]">
             <SectionIntro
-              eyebrow="Dúvidas frequentes"
               title="Respostas rápidas antes de começar."
               description="As perguntas que normalmente aparecem antes de uma profissional levar o Velora para a rotina do salão."
             />
-            <div className="grid gap-3">
-              {faqs.map((item) => (
-                <details
-                  key={item.question}
-                  className="surface-row group rounded-lg p-4"
-                >
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-foreground">
-                    {item.question}
-                    <ChevronDown
-                      size={18}
-                      className="shrink-0 text-lilac transition group-open:rotate-180"
-                    />
-                  </summary>
-                  <p className="mt-3 text-sm leading-6 text-muted">{item.answer}</p>
-                </details>
-              ))}
-            </div>
+            <FaqAccordion items={faqs} />
           </div>
         </section>
 

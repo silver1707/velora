@@ -194,9 +194,8 @@ function AnimatedHeroGraphic() {
         {/* Outer Ring Satellite (600px) */}
         <div className="absolute flex h-[600px] w-[600px] items-center justify-center animate-[spin_40s_linear_infinite]">
           <div className="absolute top-0 -translate-y-1/2 animate-[spin_40s_linear_infinite_reverse]">
-            <div className="flex items-center gap-3 rounded-full border border-border-soft bg-surface/80 px-5 py-2.5 backdrop-blur-xl shadow-xl">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full border border-border-soft bg-surface/80 backdrop-blur-xl shadow-xl">
               <Sparkles className="h-4 w-4 text-gold" />
-              <span className="text-sm font-medium text-foreground">Exclusividade</span>
             </div>
           </div>
         </div>
@@ -204,9 +203,8 @@ function AnimatedHeroGraphic() {
         {/* Middle Ring Satellite (450px) */}
         <div className="absolute flex h-[450px] w-[450px] items-center justify-center animate-[spin_30s_linear_infinite_reverse]" style={{ animationDelay: '-10s' }}>
           <div className="absolute right-0 translate-x-1/2 animate-[spin_30s_linear_infinite]" style={{ animationDelay: '-10s' }}>
-            <div className="flex items-center gap-3 rounded-full border border-border-soft bg-surface/80 px-5 py-2.5 backdrop-blur-xl shadow-xl">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full border border-border-soft bg-surface/80 backdrop-blur-xl shadow-xl">
               <CalendarDays className="h-4 w-4 text-lilac" />
-              <span className="text-sm font-medium text-foreground">Organização</span>
             </div>
           </div>
         </div>
@@ -214,9 +212,8 @@ function AnimatedHeroGraphic() {
         {/* Inner Ring Satellite (300px) */}
         <div className="absolute flex h-[300px] w-[300px] items-center justify-center animate-[spin_20s_linear_infinite]" style={{ animationDelay: '-5s' }}>
           <div className="absolute bottom-0 translate-y-1/2 animate-[spin_20s_linear_infinite_reverse]" style={{ animationDelay: '-5s' }}>
-            <div className="flex items-center gap-3 rounded-full border border-border-soft bg-surface/80 px-5 py-2.5 backdrop-blur-xl shadow-xl">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full border border-border-soft bg-surface/80 backdrop-blur-xl shadow-xl">
               <CircleDollarSign className="h-4 w-4 text-mint" />
-              <span className="text-sm font-medium text-foreground">Praticidade</span>
             </div>
           </div>
         </div>
