@@ -11,7 +11,28 @@ const publicRoutes = [
   "/precos",
   "/termos",
   "/privacidade",
+  "/robots.txt",
+  "/sitemap.xml",
 ];
+
+const protectedRoutes = [
+  "/dashboard",
+  "/clientes",
+  "/agenda",
+  "/atendimentos",
+  "/produtos",
+  "/financeiro",
+  "/ajustes",
+];
+
+function isPublicBookingSlug(path: string) {
+  const segments = path.split("/").filter(Boolean);
+  if (segments.length !== 1) {
+    return false;
+  }
+
+  return !protectedRoutes.some((route) => path === route || path.startsWith(`${route}/`));
+}
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
@@ -43,7 +64,9 @@ export async function middleware(request: NextRequest) {
   }
 
   const path = request.nextUrl.pathname;
-  const isPublic = publicRoutes.some((route) => path.startsWith(route));
+  const isPublic =
+    publicRoutes.some((route) => path.startsWith(route)) ||
+    isPublicBookingSlug(path);
 
   if (!hasUser && !isPublic && path !== "/") {
     const url = request.nextUrl.clone();
