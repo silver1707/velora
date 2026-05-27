@@ -139,40 +139,45 @@ function AnimatedHeroGraphic() {
       {/* Deep Background Glow */}
       <div className="absolute h-[500px] w-[500px] animate-pulse rounded-full bg-[radial-gradient(circle,var(--lilac-deep)_0%,transparent_70%)] opacity-30 blur-[70px]" />
 
-      {/* Orbit Rings representing Organization/System */}
-      <div className="absolute h-[600px] w-[600px] rounded-full border border-white/5 animate-[spin_40s_linear_infinite]" />
-      <div className="absolute h-[450px] w-[450px] rounded-full border border-lilac/10 animate-[spin_30s_linear_infinite_reverse]" />
-      <div className="absolute h-[300px] w-[300px] rounded-full border border-rose/10 animate-[spin_20s_linear_infinite]" />
+      <div className="relative flex h-[600px] w-[600px] items-center justify-center">
+        {/* Orbit Rings representing Organization/System */}
+        <div className="absolute h-[600px] w-[600px] rounded-full border border-white/5" />
+        <div className="absolute h-[450px] w-[450px] rounded-full border border-lilac/10" />
+        <div className="absolute h-[300px] w-[300px] rounded-full border border-rose/10" />
 
-      {/* Central Salon Emblem */}
-      <div className="relative z-10 flex h-40 w-40 items-center justify-center rounded-full bg-gradient-to-br from-surface-raised to-surface shadow-[0_0_80px_-20px_var(--lilac-strong)] border border-lilac/20 backdrop-blur-xl animate-[float_6s_ease-in-out_infinite]">
-        <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_top_left,var(--lilac-strong)_0%,transparent_50%)] opacity-20" />
-        <Scissors className="h-16 w-16 text-foreground drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" strokeWidth={1.5} />
-      </div>
+        {/* Central Salon Emblem */}
+        <div className="relative z-10 flex h-36 w-36 items-center justify-center rounded-full bg-gradient-to-br from-surface-raised to-surface shadow-[0_0_80px_-20px_var(--lilac-strong)] border border-lilac/20 backdrop-blur-xl animate-[float_6s_ease-in-out_infinite]">
+          <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_top_left,var(--lilac-strong)_0%,transparent_50%)] opacity-20" />
+          <Scissors className="h-14 w-14 text-foreground drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" strokeWidth={1.5} />
+        </div>
 
-      {/* Floating Salon Elements (Satellites) */}
-      <div className="absolute h-full w-full animate-[spin_30s_linear_infinite_reverse]">
-        {/* Satellite 1: Appointment */}
-        <div className="absolute top-[20%] left-[15%] flex animate-[spin_30s_linear_infinite] flex-col items-center gap-2">
-          <div className="flex items-center gap-3 rounded-full border border-border-soft bg-surface/80 px-5 py-2.5 backdrop-blur-xl shadow-xl">
-            <CalendarDays className="h-4 w-4 text-lilac" />
-            <span className="text-sm font-medium text-foreground">Mechas • 14:00</span>
+        {/* Outer Ring Satellite (600px) */}
+        <div className="absolute flex h-[600px] w-[600px] items-center justify-center animate-[spin_40s_linear_infinite]">
+          <div className="absolute top-0 -translate-y-1/2 animate-[spin_40s_linear_infinite_reverse]">
+            <div className="flex items-center gap-3 rounded-full border border-border-soft bg-surface/80 px-5 py-2.5 backdrop-blur-xl shadow-xl">
+              <Sparkles className="h-4 w-4 text-gold" />
+              <span className="text-sm font-medium text-foreground">Exclusividade</span>
+            </div>
           </div>
         </div>
 
-        {/* Satellite 2: Finance */}
-        <div className="absolute bottom-[25%] left-[25%] flex animate-[spin_30s_linear_infinite] flex-col items-center gap-2">
-          <div className="flex items-center gap-3 rounded-full border border-border-soft bg-surface/80 px-5 py-2.5 backdrop-blur-xl shadow-xl">
-            <CircleDollarSign className="h-4 w-4 text-mint" />
-            <span className="text-sm font-medium text-foreground">+ R$ 350,00</span>
+        {/* Middle Ring Satellite (450px) */}
+        <div className="absolute flex h-[450px] w-[450px] items-center justify-center animate-[spin_30s_linear_infinite_reverse]" style={{ animationDelay: '-10s' }}>
+          <div className="absolute right-0 translate-x-1/2 animate-[spin_30s_linear_infinite]" style={{ animationDelay: '-10s' }}>
+            <div className="flex items-center gap-3 rounded-full border border-border-soft bg-surface/80 px-5 py-2.5 backdrop-blur-xl shadow-xl">
+              <CalendarDays className="h-4 w-4 text-lilac" />
+              <span className="text-sm font-medium text-foreground">Organização</span>
+            </div>
           </div>
         </div>
 
-        {/* Satellite 3: Product */}
-        <div className="absolute top-[35%] right-[15%] flex animate-[spin_30s_linear_infinite] flex-col items-center gap-2">
-          <div className="flex items-center gap-3 rounded-full border border-border-soft bg-surface/80 px-5 py-2.5 backdrop-blur-xl shadow-xl">
-            <Package className="h-4 w-4 text-rose" />
-            <span className="text-sm font-medium text-foreground">Tinta 8.0</span>
+        {/* Inner Ring Satellite (300px) */}
+        <div className="absolute flex h-[300px] w-[300px] items-center justify-center animate-[spin_20s_linear_infinite]" style={{ animationDelay: '-5s' }}>
+          <div className="absolute bottom-0 translate-y-1/2 animate-[spin_20s_linear_infinite_reverse]" style={{ animationDelay: '-5s' }}>
+            <div className="flex items-center gap-3 rounded-full border border-border-soft bg-surface/80 px-5 py-2.5 backdrop-blur-xl shadow-xl">
+              <CircleDollarSign className="h-4 w-4 text-mint" />
+              <span className="text-sm font-medium text-foreground">Praticidade</span>
+            </div>
           </div>
         </div>
       </div>
@@ -213,16 +218,18 @@ export function SectionIntro({
   description,
   centered,
 }: {
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   description: string;
   centered?: boolean;
 }) {
   return (
     <div className={cn("max-w-3xl", centered && "mx-auto text-center")}>
-      <p className="toolbar-panel mb-4 inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase text-lilac">
-        {eyebrow}
-      </p>
+      {eyebrow && (
+        <p className="toolbar-panel mb-4 inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase text-lilac">
+          {eyebrow}
+        </p>
+      )}
       <h2 className="text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
         {title}
       </h2>

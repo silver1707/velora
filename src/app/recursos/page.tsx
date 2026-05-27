@@ -7,8 +7,7 @@ import {
   PackageSearch,
 } from "lucide-react";
 import type { Metadata } from "next";
-import { FeatureGrid, MarketingCta, MarketingShell, SectionIntro } from "@/components/marketing/marketing-layout";
-import { Badge } from "@/components/ui/badge";
+import { MarketingCta, MarketingShell, SectionIntro } from "@/components/marketing/marketing-layout";
 
 export const metadata: Metadata = {
   title: "Recursos",
@@ -25,74 +24,73 @@ const deepFeatures = [
   {
     icon: BellRing,
     title: "Alertas do dia",
-    text: "O dashboard destaca atendimentos próximos e itens de estoque que precisam de atenção.",
+    text: "O dashboard destaca atendimentos próximos e itens de estoque que precisam de atenção imediata.",
   },
   {
     icon: PackageSearch,
     title: "Produtos por serviço",
-    text: "Cada atendimento pode guardar quais produtos foram usados e em qual quantidade.",
+    text: "Cada atendimento guarda quais produtos foram usados e a quantidade exata aplicada.",
   },
   {
     icon: CalendarDays,
     title: "Agenda flexível",
-    text: "Visualizações por dia, semana e mês ajudam no planejamento rápido pelo celular.",
+    text: "Visualizações por dia, semana e mês ajudam no planejamento ultra-rápido pelo celular.",
   },
   {
     icon: CircleDollarSign,
     title: "Recebimentos automáticos",
-    text: "Atendimento concluído pode virar entrada financeira vinculada à cliente.",
+    text: "O atendimento concluído já vira uma entrada financeira vinculada ao histórico da cliente.",
   },
   {
     icon: ChartNoAxesCombined,
     title: "Métricas para decidir",
-    text: "Serviços mais realizados, faturamento mensal e estoque baixo ficam à vista.",
+    text: "Serviços mais realizados, faturamento mensal e estoque baixo sempre à vista.",
   },
 ];
 
 export default function ResourcesPage() {
   return (
     <MarketingShell>
-      <main className="pt-28">
-        <section className="px-4 pb-14 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl">
+      <main className="flex flex-col gap-12 pt-28 pb-20 sm:gap-20">
+        <section className="relative px-4 sm:px-6 lg:px-8 animate-fade-in-up delay-100">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,color-mix(in_srgb,var(--lilac-deep)_10%,transparent),transparent_50%)] pointer-events-none" />
+          <div className="relative z-10 mx-auto max-w-7xl">
             <SectionIntro
-              eyebrow="Recursos"
-              title="Tudo que uma profissional precisa para atender com memória e método."
-              description="Velora não tenta virar um ERP. Ele concentra o essencial para uma cabeleireira autônoma: relacionamento, agenda, serviços, produtos e dinheiro recebido."
+              title="Tudo que você precisa para atender com memória e método."
+              description="Velora não tenta virar um sistema complicado. Ele concentra o essencial para uma cabeleireira autônoma: relacionamento, agenda, serviços, produtos e dinheiro recebido."
               centered
             />
-            <FeatureGrid className="mt-10" />
           </div>
         </section>
 
-        <section className="border-y border-border/60 bg-surface/55 px-4 py-16 sm:px-6 lg:px-8">
-          <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <section className="relative px-4 sm:px-6 lg:px-8 animate-fade-in-up delay-300">
+          <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-2 lg:grid-cols-3">
             {deepFeatures.map((feature) => {
               const Icon = feature.icon;
               return (
-                <article key={feature.title} className="premium-panel rounded-lg p-5">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="brand-tile flex h-11 w-11 items-center justify-center rounded-lg text-lilac">
-                      <Icon size={20} />
-                    </div>
-                    <Badge className="border-lilac/25 bg-lilac/10 text-lilac">
-                      Incluso
-                    </Badge>
+                <article key={feature.title} className="premium-panel group relative rounded-2xl p-6 transition duration-300 hover:scale-[1.02] hover:shadow-2xl">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-lilac/10 text-lilac">
+                    <Icon size={22} />
                   </div>
-                  <h2 className="mt-5 text-lg font-semibold text-foreground">
+                  <h2 className="mt-6 text-lg font-semibold text-foreground">
                     {feature.title}
                   </h2>
-                  <p className="mt-3 text-sm leading-6 text-muted">{feature.text}</p>
+                  <p className="mt-3 text-sm leading-6 text-muted">
+                    {feature.text}
+                  </p>
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-transparent via-white/[0.04] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none" />
                 </article>
               );
             })}
           </div>
         </section>
 
-        <MarketingCta
-          title="Recursos completos, sem complexidade."
-          description="A ideia é abrir o celular e resolver o que importa: cadastrar, agendar, concluir, consultar e receber."
-        />
+        <div className="animate-fade-in-up delay-500">
+          <MarketingCta
+            title="Pronto para simplificar?"
+            description="Abra o celular e resolva o que importa: agendar, concluir, consultar e receber."
+          />
+        </div>
       </main>
     </MarketingShell>
   );
