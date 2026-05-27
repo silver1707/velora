@@ -8,9 +8,10 @@ import { SubmitButton } from "@/components/forms/submit-button";
 type QuickActionFormProps = {
   action: (state: ActionState, formData: FormData) => Promise<ActionState>;
   fields: Record<string, string>;
-  label: string;
+  label: React.ReactNode;
   variant?: "primary" | "secondary" | "danger";
   confirmMessage?: string;
+  className?: string;
 };
 
 export function QuickActionForm({
@@ -19,6 +20,7 @@ export function QuickActionForm({
   label,
   variant = "secondary",
   confirmMessage,
+  className,
 }: QuickActionFormProps) {
   const [state, formAction] = useActionState(action, initialActionState);
 
@@ -35,7 +37,7 @@ export function QuickActionForm({
       {Object.entries(fields).map(([name, value]) => (
         <input key={name} type="hidden" name={name} value={value} />
       ))}
-      <SubmitButton variant={variant}>{label}</SubmitButton>
+      <SubmitButton variant={variant} className={className}>{label}</SubmitButton>
       <ActionMessage state={state} />
     </form>
   );
