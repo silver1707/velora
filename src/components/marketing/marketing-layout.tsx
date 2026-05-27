@@ -133,20 +133,66 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
   );
 }
 
+function AnimatedHeroGraphic() {
+  return (
+    <div className="absolute inset-y-0 right-0 hidden w-[55%] lg:block pointer-events-none">
+      {/* Glows */}
+      <div className="absolute top-[20%] right-[20%] h-72 w-72 animate-pulse rounded-full bg-lilac-strong/20 blur-[100px] delay-700" />
+      <div className="absolute top-[50%] right-[10%] h-64 w-64 animate-pulse rounded-full bg-rose/15 blur-[80px]" />
+      
+      {/* Floating UI Elements */}
+      <div className="absolute right-[10%] top-[25%] flex w-80 flex-col gap-6">
+        {/* Card 1 */}
+        <div 
+          className="premium-panel flex items-center gap-4 rounded-xl p-4 shadow-2xl backdrop-blur-md"
+          style={{ animation: 'float 6s ease-in-out infinite' }}
+        >
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-lilac/10 text-lilac">
+            <CalendarDays size={22} />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-foreground">Ana Silva</p>
+            <p className="text-xs text-muted">Coloração e Corte • 14:00</p>
+          </div>
+        </div>
+
+        {/* Card 2 */}
+        <div 
+          className="premium-panel flex items-center gap-4 rounded-xl p-4 shadow-2xl backdrop-blur-md -translate-x-12"
+          style={{ animation: 'float-reverse 8s ease-in-out infinite' }}
+        >
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-mint/10 text-mint">
+            <CircleDollarSign size={22} />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-foreground">Pagamento aprovado</p>
+            <p className="text-xs text-muted">+ R$ 380,00 via PIX</p>
+          </div>
+        </div>
+
+        {/* Card 3 */}
+        <div 
+          className="premium-panel flex items-center gap-4 rounded-xl p-4 shadow-2xl backdrop-blur-md translate-x-4"
+          style={{ animation: 'float 7s ease-in-out infinite 2s' }}
+        >
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose/10 text-rose">
+            <Package size={22} />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-foreground">Estoque atualizado</p>
+            <p className="text-xs text-muted">Tinta 8.0 vinculada ao serviço</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function HeroSection() {
   return (
-    <section className="relative min-h-[88svh] overflow-hidden pt-16">
-      <Image
-        src="/marketing/velora-hero.png"
-        alt="Dashboard Velora em um notebook sobre uma bancada de salão"
-        fill
-        priority
-        sizes="100vw"
-        className="object-cover object-[64%_center]"
-      />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--background)_0%,color-mix(in_srgb,var(--background)_82%,transparent)_30%,color-mix(in_srgb,var(--background)_24%,transparent)_72%,color-mix(in_srgb,var(--background)_50%,transparent)_100%)]" />
-      <div className="absolute inset-x-0 bottom-0 h-32 bg-[linear-gradient(0deg,var(--background),transparent)]" />
-      <div className="relative z-10 mx-auto flex min-h-[calc(88svh-4rem)] w-full max-w-7xl items-center px-4 py-16 sm:px-6 lg:px-8">
+    <section className="relative min-h-[88svh] overflow-hidden pt-16 flex items-center">
+      <AnimatedHeroGraphic />
+      <div className="relative z-10 mx-auto flex w-full max-w-7xl items-center px-4 py-16 sm:px-6 lg:px-8">
         <div className="max-w-2xl animate-fade-in-up">
           <h1 className="max-w-2xl text-4xl font-semibold leading-tight text-foreground sm:text-6xl">
             Velora organiza o salão sem tirar beleza da rotina.
