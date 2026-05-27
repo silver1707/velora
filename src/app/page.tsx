@@ -36,48 +36,26 @@ const workflow = [
 export default function LandingPage() {
   return (
     <MarketingShell>
-      <main>
+      <main className="flex flex-col">
         <HeroSection />
 
-        <section className="relative z-20 -mt-16 px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto grid max-w-7xl gap-3 md:grid-cols-3">
-            {[
-              ["Agenda", "dia, semana e mês"],
-              ["Histórico", "técnico por cliente"],
-              ["Estoque", "alertas automáticos"],
-            ].map(([title, detail]) => (
-              <div key={title} className="premium-panel rounded-lg p-4">
-                <p className="text-sm font-semibold text-foreground">{title}</p>
-                <p className="mt-1 text-xs leading-5 text-muted">{detail}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="px-4 py-16 sm:px-6 lg:px-8">
+        {/* Produto Section without title/cards, connected fluidly */}
+        <section className="relative px-4 py-16 sm:px-6 lg:px-8 animate-fade-in-up delay-400">
+          <div className="absolute inset-x-0 -top-32 h-32 bg-[linear-gradient(180deg,transparent,var(--background))]" />
           <div className="mx-auto max-w-7xl">
-            <SectionIntro
-              eyebrow="Produto"
-              title="Um sistema que entende a rotina de uma cabeleireira."
-              description="O Velora junta o que costuma ficar espalhado: mensagens, anotações, agenda, fotos, produtos e recebimentos. Tudo em telas rápidas, escuras e pensadas para tocar no celular entre um atendimento e outro."
-              centered
-            />
-            <FeatureGrid className="mt-10" />
+            <FeatureGrid className="mt-6" />
           </div>
         </section>
 
-        <section className="border-y border-border/60 bg-surface/55 px-4 py-16 sm:px-6 lg:px-8">
-          <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-            <SectionIntro
-              eyebrow="Fluxo diário"
-              title="Da cliente ao financeiro, sem retrabalho."
-              description="Cada ação alimenta a próxima: ao concluir um atendimento, o histórico fica salvo, o financeiro recebe o valor e os produtos usados podem refletir no estoque."
-            />
+        {/* Fluxo Diário Section */}
+        <section className="relative px-4 py-16 sm:px-6 lg:px-8 animate-fade-in-up delay-500">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,color-mix(in_srgb,var(--lilac-deep)_5%,transparent),transparent_70%)] pointer-events-none" />
+          <div className="relative z-10 mx-auto max-w-3xl">
             <div className="grid gap-4">
               {workflow.map((item, index) => {
                 const Icon = item.icon;
                 return (
-                  <article key={item.title} className="premium-panel grid gap-4 rounded-lg p-5 sm:grid-cols-[54px_1fr]">
+                  <article key={item.title} className="premium-panel grid gap-4 rounded-lg p-5 sm:grid-cols-[54px_1fr] transition hover:scale-[1.02]">
                     <div className="brand-tile flex h-12 w-12 items-center justify-center rounded-lg text-lilac">
                       <Icon size={20} />
                     </div>
@@ -97,8 +75,10 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="px-4 py-16 sm:px-6 lg:px-8">
-          <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
+        {/* Diferenciais Section */}
+        <section className="relative px-4 py-16 sm:px-6 lg:px-8">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,color-mix(in_srgb,var(--rose)_4%,transparent),transparent_60%)] pointer-events-none" />
+          <div className="relative z-10 mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
             {[
               {
                 icon: Smartphone,
@@ -107,18 +87,18 @@ export default function LandingPage() {
               },
               {
                 icon: ShieldCheck,
-                title: "Dados por usuária",
-                text: "Supabase Auth e RLS separam os dados de cada conta no banco.",
+                title: "Segurança total",
+                text: "Seus dados e o histórico das suas clientes ficam isolados e protegidos com tecnologia de ponta.",
               },
               {
                 icon: ArrowRight,
-                title: "Pronto para evoluir",
-                text: "Base em Next.js, TypeScript e Supabase para crescer sem bagunça.",
+                title: "Sempre atualizado",
+                text: "Um sistema premium, rápido e em constante evolução para acompanhar o crescimento do seu salão.",
               },
             ].map((item) => {
               const Icon = item.icon;
               return (
-                <article key={item.title} className="surface-row rounded-lg p-5">
+                <article key={item.title} className="surface-row rounded-lg p-5 transition hover:bg-surface-glow/40">
                   <Icon className="text-lilac" size={22} />
                   <h3 className="mt-4 text-lg font-semibold text-foreground">
                     {item.title}
@@ -130,7 +110,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <MarketingCta />
+        <MarketingCta title="Tudo pronto para começar" description="Acesse pelo celular ou computador." />
       </main>
     </MarketingShell>
   );

@@ -147,18 +147,14 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--background)_0%,color-mix(in_srgb,var(--background)_82%,transparent)_30%,color-mix(in_srgb,var(--background)_24%,transparent)_72%,color-mix(in_srgb,var(--background)_50%,transparent)_100%)]" />
       <div className="absolute inset-x-0 bottom-0 h-32 bg-[linear-gradient(0deg,var(--background),transparent)]" />
       <div className="relative z-10 mx-auto flex min-h-[calc(88svh-4rem)] w-full max-w-7xl items-center px-4 py-16 sm:px-6 lg:px-8">
-        <div className="max-w-2xl">
-          <p className="toolbar-panel mb-5 inline-flex rounded-full px-3 py-1 text-sm font-semibold text-lilac">
-            Sistema para cabeleireiras autônomas
-          </p>
+        <div className="max-w-2xl animate-fade-in-up">
           <h1 className="max-w-2xl text-4xl font-semibold leading-tight text-foreground sm:text-6xl">
             Velora organiza o salão sem tirar beleza da rotina.
           </h1>
-          <p className="mt-5 max-w-xl text-base leading-8 text-muted sm:text-lg">
-            Clientes, agenda, atendimentos, produtos usados e financeiro em um
-            sistema premium, rápido e pensado para uso diário pelo celular.
+          <p className="mt-5 max-w-xl text-base leading-8 text-muted sm:text-lg animate-fade-in delay-200">
+            Organização premium, simples e elegante para a sua rotina no salão.
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row animate-fade-in delay-300">
             <LinkButton href="/cadastro" variant="primary" className="h-12 px-5">
               Criar conta grátis
               <ArrowRight size={17} />
@@ -218,7 +214,7 @@ export function FeatureGrid({ className }: { className?: string }) {
 
 export function MarketingCta({
   title = "Leve o Velora para a rotina do salão.",
-  description = "Crie sua conta, configure o Supabase e comece a organizar clientes, agenda e recebimentos em uma experiência pronta para o dia a dia.",
+  description = "Crie sua conta e comece a organizar clientes, agenda e recebimentos em uma experiência pronta para o dia a dia.",
 }: {
   title?: string;
   description?: string;
