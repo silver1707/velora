@@ -42,7 +42,6 @@ export default function LandingPage() {
         <section className="relative px-4 sm:px-6 lg:px-8 animate-fade-in-up delay-400">
           <div className="mx-auto max-w-7xl">
             <SectionIntro
-              eyebrow="Organização"
               title="Um sistema que entende a rotina do salão."
               description="Reúna o que costuma ficar espalhado: mensagens, anotações, agenda, produtos e recebimentos, em uma experiência rápida e feita para o celular."
               centered

@@ -137,66 +137,6 @@ export default async function DashboardPage() {
         </article>
       </section>
 
-      <section className="mt-6 grid gap-6 xl:grid-cols-2">
-        <article className="premium-panel rounded-lg p-5">
-          <h2 className="text-lg font-semibold text-foreground">
-            Próximos agendamentos
-          </h2>
-          <div className="mt-4 grid gap-3">
-            {data.upcoming.length ? (
-              data.upcoming.map((service) => (
-                <div
-                  key={service.id}
-                  className="surface-row rounded-lg p-4"
-                >
-                  <p className="font-medium text-foreground">
-                    {service.clients?.name ?? "Cliente"}
-                  </p>
-                  <p className="mt-1 text-sm text-muted">
-                    {service.service_type} • {dateTimeLabel(service.scheduled_at)}
-                  </p>
-                </div>
-              ))
-            ) : (
-              <EmptyState
-                title="Sem próximos horários"
-                description="Crie agendamentos para acompanhar os próximos atendimentos."
-              />
-            )}
-          </div>
-        </article>
-
-        <article className="premium-panel rounded-lg p-5">
-          <h2 className="text-lg font-semibold text-foreground">
-            Produtos com estoque baixo
-          </h2>
-          <div className="mt-4 grid gap-3">
-            {data.lowStock.length ? (
-              data.lowStock.map((product) => (
-                <div
-                  key={product.id}
-                  className="surface-row flex items-center justify-between gap-4 rounded-lg p-4"
-                >
-                  <div>
-                    <p className="font-medium text-foreground">{product.name}</p>
-                    <p className="mt-1 text-sm text-muted">
-                      {product.brand ?? "Sem marca"} • mínimo {product.low_stock_threshold}
-                    </p>
-                  </div>
-                  <Badge className="border-gold/30 bg-gold/10 text-gold">
-                    {product.stock_quantity}
-                  </Badge>
-                </div>
-              ))
-            ) : (
-              <EmptyState
-                title="Estoque tranquilo"
-                description="Os alertas aparecem quando algum item fica abaixo do mínimo."
-              />
-            )}
-          </div>
-        </article>
-      </section>
     </>
   );
 }
