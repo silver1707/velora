@@ -63,18 +63,8 @@ export function SidebarNav({ mobile = false }: { mobile?: boolean }) {
   );
 }
 
-export function BrandMark() {
-  return (
-    <div className="flex items-center gap-3">
-      <div className="brand-tile flex h-10 w-10 items-center justify-center rounded-lg text-lg font-semibold text-lilac">
-        V
-      </div>
-      <div>
-        <p className="text-lg font-semibold text-foreground">Velora</p>
-        <p className="text-xs text-muted">Gestão de beleza</p>
-      </div>
-    </div>
-  );
+export function BrandMark({ compact = false }: { compact?: boolean }) {
+  return <VeloraLogo compact={compact} />;
 }
 
 export function HeaderMetric({

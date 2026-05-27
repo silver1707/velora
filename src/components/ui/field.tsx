@@ -10,23 +10,25 @@ type FieldProps = {
 
 export function Field({ label, hint, error, children }: FieldProps) {
   return (
-    <label className="grid gap-2 text-sm">
-      <span className="font-medium text-foreground">{label}</span>
+    <label className="grid gap-1.5 text-sm group">
+      <span className="font-semibold text-muted-strong text-[13px] tracking-wide uppercase transition-colors group-focus-within:text-lilac ml-1">
+        {label}
+      </span>
       {children}
       {error ? (
-        <span className="text-xs text-danger">{error}</span>
+        <span className="text-xs font-medium text-danger mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{error}</span>
       ) : hint ? (
-        <span className="text-xs text-muted">{hint}</span>
+        <span className="text-xs font-medium text-muted mt-1 ml-1">{hint}</span>
       ) : null}
     </label>
   );
 }
 
 export const inputClassName =
-  "h-12 w-full rounded-xl border border-border-soft bg-surface-raised/30 px-4 text-sm text-foreground outline-none shadow-inner backdrop-blur-sm transition-all duration-300 placeholder:text-muted focus:border-lilac/50 focus:bg-surface-raised/60 focus:ring-[3px] focus:ring-lilac/15";
+  "h-12 w-full rounded-2xl border border-border-soft bg-background/50 px-4 text-sm font-medium text-foreground outline-none shadow-[inset_0_1px_4px_rgba(0,0,0,0.1)] backdrop-blur-md transition-all duration-300 placeholder:text-muted/70 hover:border-border-strong hover:bg-background/80 focus:border-lilac/60 focus:bg-background focus:ring-4 focus:ring-lilac/15 focus:shadow-[0_0_20px_-5px_var(--lilac)]";
 
 export const textareaClassName =
-  "min-h-[120px] w-full rounded-xl border border-border-soft bg-surface-raised/30 px-4 py-4 text-sm text-foreground outline-none shadow-inner backdrop-blur-sm transition-all duration-300 placeholder:text-muted focus:border-lilac/50 focus:bg-surface-raised/60 focus:ring-[3px] focus:ring-lilac/15";
+  "min-h-[120px] w-full rounded-2xl border border-border-soft bg-background/50 px-4 py-4 text-sm font-medium text-foreground outline-none shadow-[inset_0_1px_4px_rgba(0,0,0,0.1)] backdrop-blur-md transition-all duration-300 placeholder:text-muted/70 hover:border-border-strong hover:bg-background/80 focus:border-lilac/60 focus:bg-background focus:ring-4 focus:ring-lilac/15 focus:shadow-[0_0_20px_-5px_var(--lilac)]";
 
 export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input className={cn(inputClassName, props.className)} {...props} />;
@@ -45,7 +47,7 @@ export function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
     <select
       className={cn(
         inputClassName,
-        "select-chevron appearance-none pr-9",
+        "select-chevron appearance-none pr-9 cursor-pointer",
         props.className,
       )}
       {...props}
