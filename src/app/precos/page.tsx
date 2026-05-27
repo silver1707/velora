@@ -1,4 +1,4 @@
-import { Building2, Check, Crown, Sparkles } from "lucide-react";
+import { Building2, Check, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import { MarketingCta, MarketingShell, SectionIntro } from "@/components/marketing/marketing-layout";
 import { LinkButton } from "@/components/ui/button";

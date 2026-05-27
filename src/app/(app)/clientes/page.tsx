@@ -56,10 +56,10 @@ export default async function ClientsPage({
             name="busca"
             defaultValue={params.busca ?? ""}
             placeholder="Buscar por nome, telefone ou bairro"
-            className="pl-11 border-transparent bg-background/50 hover:border-lilac/30"
+            className="pl-11"
           />
         </div>
-        <Select name="cabelo" defaultValue={params.cabelo ?? ""} className="border-transparent bg-background/50 hover:border-lilac/30">
+        <Select name="cabelo" defaultValue={params.cabelo ?? ""}>
           <option value="">Todos os cabelos</option>
           {hairTypes.map((type) => (
             <option key={type}>{type}</option>

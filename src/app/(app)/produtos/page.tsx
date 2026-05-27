@@ -55,10 +55,10 @@ export default async function ProductsPage({
             name="busca"
             defaultValue={params.busca ?? ""}
             placeholder="Buscar por nome, marca ou categoria"
-            className="pl-11 border-transparent bg-background/50 hover:border-lilac/30"
+            className="pl-11"
           />
         </div>
-        <Select name="baixo" defaultValue={params.baixo ?? ""} className="border-transparent bg-background/50 hover:border-lilac/30">
+        <Select name="baixo" defaultValue={params.baixo ?? ""}>
           <option value="">Todos</option>
           <option value="true">Estoque baixo</option>
         </Select>

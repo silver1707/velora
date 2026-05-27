@@ -26,6 +26,30 @@ export type Client = {
   updated_at: string;
 };
 
+export type ProfileSettings = {
+  id: string;
+  full_name: string | null;
+  email: string | null;
+  business_name: string | null;
+  public_slug: string | null;
+  whatsapp_phone: string | null;
+  booking_enabled: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ServiceCatalogItem = {
+  id: string;
+  user_id: string;
+  name: string;
+  price: number;
+  duration_minutes: number;
+  description: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
 export type Product = {
   id: string;
   user_id: string;
@@ -60,6 +84,8 @@ export type ServiceRecord = {
   payment_method: string | null;
   notes: string | null;
   duration_minutes: number | null;
+  before_photo_url: string | null;
+  after_photo_url: string | null;
   status: AppointmentStatus;
   created_at: string;
   updated_at: string;
@@ -79,6 +105,34 @@ export type FinancialEntry = {
   created_at: string;
   clients?: Pick<Client, "id" | "name"> | null;
   service_records?: Pick<ServiceRecord, "id" | "service_type"> | null;
+};
+
+export type BookingRequestStatus = "pendente" | "aceito" | "recusado";
+
+export type BookingRequest = {
+  id: string;
+  professional_id: string;
+  service_catalog_id: string | null;
+  service_record_id: string | null;
+  client_name: string;
+  client_phone: string;
+  client_notes: string | null;
+  service_name: string;
+  requested_start_at: string;
+  requested_duration_minutes: number;
+  estimated_price: number;
+  status: BookingRequestStatus;
+  created_at: string;
+  updated_at: string;
+  service_catalog?: Pick<ServiceCatalogItem, "id" | "name" | "price" | "duration_minutes"> | null;
+};
+
+export type PublicBookingProfile = {
+  id: string;
+  full_name: string | null;
+  business_name: string | null;
+  whatsapp_phone: string | null;
+  public_slug: string;
 };
 
 export type ActionState = {

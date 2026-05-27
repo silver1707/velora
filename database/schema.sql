@@ -8,15 +8,30 @@ begin
   if not exists (select 1 from pg_type where typname = 'appointment_status') then
     create type public.appointment_status as enum ('agendado', 'concluido', 'cancelado', 'pendente');
   end if;
+  if not exists (select 1 from pg_type where typname = 'booking_request_status') then
+    create type public.booking_request_status as enum ('pendente', 'aceito', 'recusado');
+  end if;
 end $$;
 
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   full_name text,
   email text,
+  business_name text,
+  public_slug text,
+  whatsapp_phone text,
+  booking_enabled boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.profiles add column if not exists business_name text;
+alter table public.profiles add column if not exists public_slug text;
+alter table public.profiles add column if not exists whatsapp_phone text;
+alter table public.profiles add column if not exists booking_enabled boolean not null default false;
+create unique index if not exists profiles_public_slug_key
+  on public.profiles(public_slug)
+  where public_slug is not null;
 
 create table if not exists public.clients (
   id uuid primary key default gen_random_uuid(),
@@ -67,7 +82,41 @@ create table if not exists public.service_records (
   payment_method text,
   notes text,
   duration_minutes integer check (duration_minutes is null or (duration_minutes >= 5 and duration_minutes <= 720)),
+  before_photo_url text,
+  after_photo_url text,
   status public.appointment_status not null default 'agendado',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.service_records add column if not exists before_photo_url text;
+alter table public.service_records add column if not exists after_photo_url text;
+
+create table if not exists public.service_catalog (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  name text not null,
+  price numeric(12,2) not null default 0 check (price >= 0),
+  duration_minutes integer not null default 60 check (duration_minutes >= 5 and duration_minutes <= 720),
+  description text,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.booking_requests (
+  id uuid primary key default gen_random_uuid(),
+  professional_id uuid not null references auth.users(id) on delete cascade,
+  service_catalog_id uuid references public.service_catalog(id) on delete set null,
+  service_record_id uuid references public.service_records(id) on delete set null,
+  client_name text not null,
+  client_phone text not null,
+  client_notes text,
+  service_name text not null,
+  requested_start_at timestamptz not null,
+  requested_duration_minutes integer not null default 60 check (requested_duration_minutes >= 5 and requested_duration_minutes <= 720),
+  estimated_price numeric(12,2) not null default 0 check (estimated_price >= 0),
+  status public.booking_request_status not null default 'pendente',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -111,6 +160,7 @@ create index if not exists clients_user_name_idx on public.clients(user_id, name
 create index if not exists clients_user_phone_idx on public.clients(user_id, phone);
 create index if not exists products_user_name_idx on public.products(user_id, name);
 create index if not exists products_low_stock_idx on public.products(user_id, stock_quantity, low_stock_threshold);
+create index if not exists service_catalog_user_active_idx on public.service_catalog(user_id, is_active, name);
 create index if not exists service_records_user_schedule_idx on public.service_records(user_id, scheduled_at);
 create index if not exists service_records_user_status_idx on public.service_records(user_id, status);
 create index if not exists service_records_client_idx on public.service_records(client_id, scheduled_at desc);
@@ -120,6 +170,8 @@ create index if not exists product_stock_movements_service_idx on public.product
 create index if not exists product_stock_movements_product_idx on public.product_stock_movements(product_id, created_at desc);
 create index if not exists financial_entries_user_received_idx on public.financial_entries(user_id, received_at desc);
 create index if not exists financial_entries_client_idx on public.financial_entries(client_id, received_at desc);
+create index if not exists booking_requests_professional_status_idx on public.booking_requests(professional_id, status, requested_start_at);
+create index if not exists booking_requests_service_idx on public.booking_requests(service_catalog_id);
 
 create or replace function public.set_updated_at()
 returns trigger
@@ -146,6 +198,11 @@ create trigger set_products_updated_at
 before update on public.products
 for each row execute function public.set_updated_at();
 
+drop trigger if exists set_service_catalog_updated_at on public.service_catalog;
+create trigger set_service_catalog_updated_at
+before update on public.service_catalog
+for each row execute function public.set_updated_at();
+
 drop trigger if exists set_service_records_updated_at on public.service_records;
 create trigger set_service_records_updated_at
 before update on public.service_records
@@ -154,6 +211,11 @@ for each row execute function public.set_updated_at();
 drop trigger if exists set_financial_entries_updated_at on public.financial_entries;
 create trigger set_financial_entries_updated_at
 before update on public.financial_entries
+for each row execute function public.set_updated_at();
+
+drop trigger if exists set_booking_requests_updated_at on public.booking_requests;
+create trigger set_booking_requests_updated_at
+before update on public.booking_requests
 for each row execute function public.set_updated_at();
 
 create or replace function public.handle_new_user()
@@ -280,13 +342,110 @@ $$;
 revoke all on function public.sync_service_stock(uuid) from public;
 grant execute on function public.sync_service_stock(uuid) to authenticated;
 
+create or replace function public.get_public_booking_profile(p_slug text)
+returns table (
+  id uuid,
+  full_name text,
+  business_name text,
+  whatsapp_phone text,
+  public_slug text
+)
+language sql
+security definer
+set search_path = public
+as $$
+  select
+    profiles.id,
+    profiles.full_name,
+    profiles.business_name,
+    profiles.whatsapp_phone,
+    profiles.public_slug
+  from public.profiles
+  where profiles.public_slug = p_slug
+    and profiles.booking_enabled = true
+  limit 1;
+$$;
+
+revoke all on function public.get_public_booking_profile(text) from public;
+grant execute on function public.get_public_booking_profile(text) to anon, authenticated;
+
+create or replace function public.is_booking_profile_enabled(p_user_id uuid)
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.profiles
+    where id = p_user_id
+      and booking_enabled = true
+      and public_slug is not null
+  );
+$$;
+
+revoke all on function public.is_booking_profile_enabled(uuid) from public;
+grant execute on function public.is_booking_profile_enabled(uuid) to anon, authenticated;
+
+create or replace function public.get_public_available_slots(
+  p_slug text,
+  p_date date,
+  p_duration_minutes integer default 60
+)
+returns table (starts_at timestamptz)
+language sql
+security definer
+set search_path = public
+as $$
+  with salon as (
+    select id
+    from public.profiles
+    where public_slug = p_slug
+      and booking_enabled = true
+    limit 1
+  ),
+  slots as (
+    select generate_series(
+      ((p_date::text || ' 08:00')::timestamp at time zone 'America/Sao_Paulo'),
+      ((p_date::text || ' 19:00')::timestamp at time zone 'America/Sao_Paulo'),
+      interval '30 minutes'
+    ) as starts_at
+  )
+  select slots.starts_at
+  from slots
+  cross join salon
+  where slots.starts_at >= now() + interval '1 hour'
+    and not exists (
+      select 1
+      from public.service_records service_records
+      where service_records.user_id = salon.id
+        and service_records.status <> 'cancelado'
+        and service_records.scheduled_at < slots.starts_at + make_interval(mins => greatest(p_duration_minutes, 5))
+        and service_records.scheduled_at + make_interval(mins => coalesce(service_records.duration_minutes, 60)) > slots.starts_at
+    )
+    and not exists (
+      select 1
+      from public.booking_requests booking_requests
+      where booking_requests.professional_id = salon.id
+        and booking_requests.status = 'pendente'
+        and booking_requests.requested_start_at < slots.starts_at + make_interval(mins => greatest(p_duration_minutes, 5))
+        and booking_requests.requested_start_at + make_interval(mins => booking_requests.requested_duration_minutes) > slots.starts_at
+    )
+  order by slots.starts_at;
+$$;
+
+revoke all on function public.get_public_available_slots(text, date, integer) from public;
+grant execute on function public.get_public_available_slots(text, date, integer) to anon, authenticated;
+
 alter table public.profiles enable row level security;
 alter table public.clients enable row level security;
 alter table public.products enable row level security;
+alter table public.service_catalog enable row level security;
 alter table public.service_records enable row level security;
 alter table public.service_products enable row level security;
 alter table public.product_stock_movements enable row level security;
 alter table public.financial_entries enable row level security;
+alter table public.booking_requests enable row level security;
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
@@ -340,6 +499,28 @@ for update using (user_id = auth.uid()) with check (user_id = auth.uid());
 
 drop policy if exists products_delete_own on public.products;
 create policy products_delete_own on public.products
+for delete using (user_id = auth.uid());
+
+drop policy if exists service_catalog_select_own_or_public on public.service_catalog;
+create policy service_catalog_select_own_or_public on public.service_catalog
+for select using (
+  user_id = auth.uid()
+  or (
+    is_active = true
+    and public.is_booking_profile_enabled(user_id)
+  )
+);
+
+drop policy if exists service_catalog_insert_own on public.service_catalog;
+create policy service_catalog_insert_own on public.service_catalog
+for insert with check (user_id = auth.uid());
+
+drop policy if exists service_catalog_update_own on public.service_catalog;
+create policy service_catalog_update_own on public.service_catalog
+for update using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+drop policy if exists service_catalog_delete_own on public.service_catalog;
+create policy service_catalog_delete_own on public.service_catalog
 for delete using (user_id = auth.uid());
 
 drop policy if exists service_records_select_own on public.service_records;
@@ -462,6 +643,33 @@ with check (
 drop policy if exists financial_entries_delete_own on public.financial_entries;
 create policy financial_entries_delete_own on public.financial_entries
 for delete using (user_id = auth.uid());
+
+drop policy if exists booking_requests_select_own on public.booking_requests;
+create policy booking_requests_select_own on public.booking_requests
+for select using (professional_id = auth.uid());
+
+drop policy if exists booking_requests_insert_public_enabled on public.booking_requests;
+create policy booking_requests_insert_public_enabled on public.booking_requests
+for insert with check (
+  public.is_booking_profile_enabled(professional_id)
+  and (
+    service_catalog_id is null
+    or exists (
+      select 1 from public.service_catalog sc
+      where sc.id = service_catalog_id
+        and sc.user_id = professional_id
+        and sc.is_active = true
+    )
+  )
+);
+
+drop policy if exists booking_requests_update_own on public.booking_requests;
+create policy booking_requests_update_own on public.booking_requests
+for update using (professional_id = auth.uid()) with check (professional_id = auth.uid());
+
+drop policy if exists booking_requests_delete_own on public.booking_requests;
+create policy booking_requests_delete_own on public.booking_requests
+for delete using (professional_id = auth.uid());
 
 drop policy if exists client_photos_public_read on storage.objects;
 create policy client_photos_public_read on storage.objects

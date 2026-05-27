@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Package,
   Scissors,
+  Settings,
   UsersRound,
 } from "lucide-react";
 import Link from "next/link";
@@ -21,6 +22,7 @@ const navItems = [
   { href: "/atendimentos", label: "Atendimentos", icon: Scissors },
   { href: "/produtos", label: "Produtos", icon: Package },
   { href: "/financeiro", label: "Financeiro", icon: CircleDollarSign },
+  { href: "/ajustes", label: "Ajustes", icon: Settings },
 ];
 
 export function SidebarNav({ mobile = false }: { mobile?: boolean }) {
@@ -30,7 +32,7 @@ export function SidebarNav({ mobile = false }: { mobile?: boolean }) {
     <nav
       className={cn(
         mobile
-          ? "grid grid-cols-6 gap-1"
+          ? "flex gap-1 overflow-x-auto pb-1 scrollbar-soft"
           : "grid gap-1",
       )}
       aria-label="Navegação principal"
@@ -45,7 +47,7 @@ export function SidebarNav({ mobile = false }: { mobile?: boolean }) {
             href={item.href}
             className={cn(
               "group flex items-center gap-3 rounded-lg border px-3 py-2.5 text-sm font-medium transition",
-              mobile && "flex-col gap-1 px-1 py-1.5 text-[10px]",
+              mobile && "min-w-16 flex-col gap-1 px-2 py-1.5 text-[10px]",
               active
                 ? "border-lilac/35 bg-lilac/12 text-foreground shadow-sm shadow-lilac-strong/10"
                 : "border-transparent text-muted hover:border-border hover:bg-surface-raised/70 hover:text-foreground",

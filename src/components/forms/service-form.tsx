@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useMemo, useState } from "react";
 import { ActionMessage } from "@/components/forms/action-message";
+import { PhotoUploader } from "@/components/forms/photo-uploader";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { Field, Input, Select, Textarea } from "@/components/ui/field";
 import {
@@ -14,6 +15,7 @@ import {
   type ActionState,
   type Client,
   type Product,
+  type ServiceCatalogItem,
   type ServiceRecord,
 } from "@/lib/types";
 import { inputDateTimeValue } from "@/lib/utils";
@@ -27,11 +29,13 @@ export function ServiceForm({
   clients,
   products,
   defaultClientId,
+  catalogServices = [],
 }: {
   service?: ServiceRecord;
   clients: Client[];
   products: Product[];
   defaultClientId?: string;
+  catalogServices?: ServiceCatalogItem[];
 }) {
   const action = service ? updateServiceAction : createServiceAction;
   const [state, formAction] = useActionState<ActionState, FormData>(
@@ -41,6 +45,60 @@ export function ServiceForm({
   const selectedProducts = new Map(
     service?.service_products?.map((item) => [item.product_id, item]) ?? [],
   );
+  const initialServiceName = service?.service_type ?? "";
+  const initialPrice = String(service?.price ?? "");
+  const initialDuration = String(service?.duration_minutes ?? 60);
+  const [selectedServiceName, setSelectedServiceName] = useState(initialServiceName);
+  const [price, setPrice] = useState(initialPrice);
+  const [duration, setDuration] = useState(initialDuration);
+  const serviceOptions = useMemo(() => {
+    const names = new Set<string>();
+    const options = [
+      ...catalogServices.map((item) => ({
+        name: item.name,
+        price: item.price,
+        duration_minutes: item.duration_minutes,
+      })),
+      ...serviceTypes.map((name) => ({
+        name,
+        price: null,
+        duration_minutes: null,
+      })),
+    ].filter((item) => {
+      if (names.has(item.name)) {
+        return false;
+      }
+
+      names.add(item.name);
+      return true;
+    });
+
+    if (initialServiceName && !names.has(initialServiceName)) {
+      options.unshift({
+        name: initialServiceName,
+        price: null,
+        duration_minutes: null,
+      });
+    }
+
+    return options;
+  }, [catalogServices, initialServiceName]);
+
+  function handleServiceChange(value: string) {
+    setSelectedServiceName(value);
+    const selected = catalogServices.find((item) => item.name === value);
+
+    if (selected) {
+      setPrice(String(selected.price));
+      setDuration(String(selected.duration_minutes));
+      return;
+    }
+
+    if (!service) {
+      setPrice("");
+      setDuration("60");
+    }
+  }
 
   return (
     <form action={formAction} className="grid gap-4">
@@ -62,10 +120,18 @@ export function ServiceForm({
           </Select>
         </Field>
         <Field label="Serviço" error={state.errors?.service_type?.[0]}>
-          <Select name="service_type" required defaultValue={service?.service_type ?? ""}>
+          <Select
+            name="service_type"
+            required
+            value={selectedServiceName}
+            onChange={(event) => handleServiceChange(event.currentTarget.value)}
+          >
             <option value="">Selecionar serviço</option>
-            {serviceTypes.map((type) => (
-              <option key={type}>{type}</option>
+            {serviceOptions.map((type) => (
+              <option key={type.name} value={type.name}>
+                {type.name}
+                {type.price !== null ? ` - ${type.duration_minutes} min` : ""}
+              </option>
             ))}
           </Select>
         </Field>
@@ -83,7 +149,8 @@ export function ServiceForm({
             type="number"
             min={5}
             max={720}
-            defaultValue={service?.duration_minutes ?? 60}
+            value={duration}
+            onChange={(event) => setDuration(event.currentTarget.value)}
           />
         </Field>
         <Field label="Valor cobrado">
@@ -92,7 +159,8 @@ export function ServiceForm({
             type="number"
             min={0}
             step="0.01"
-            defaultValue={service?.price ?? 0}
+            value={price}
+            onChange={(event) => setPrice(event.currentTarget.value)}
           />
         </Field>
         <Field label="Pagamento">
@@ -163,6 +231,27 @@ export function ServiceForm({
               Cadastre produtos para relacionar ao atendimento.
             </p>
           )}
+        </div>
+      </div>
+
+      <div className="surface-row rounded-lg p-4">
+        <div className="mb-3">
+          <h3 className="text-sm font-semibold text-foreground">Registro visual</h3>
+          <p className="mt-1 text-xs text-muted">
+            Salve fotos deste atendimento para acompanhar a evolução da cliente.
+          </p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <PhotoUploader
+            name="before_photo_url"
+            label="Antes do atendimento"
+            initialValue={service?.before_photo_url}
+          />
+          <PhotoUploader
+            name="after_photo_url"
+            label="Depois do atendimento"
+            initialValue={service?.after_photo_url}
+          />
         </div>
       </div>
 

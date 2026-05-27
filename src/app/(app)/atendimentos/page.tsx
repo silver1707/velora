@@ -19,7 +19,12 @@ import {
   deleteServiceAction,
   updateServiceStatusAction,
 } from "@/server/actions/services";
-import { getClients, getProducts, getServiceRecordsPage } from "@/server/queries";
+import {
+  getClients,
+  getProducts,
+  getServiceCatalog,
+  getServiceRecordsPage,
+} from "@/server/queries";
 
 export default async function ServicesPage({
   searchParams,
@@ -27,9 +32,10 @@ export default async function ServicesPage({
   searchParams: Promise<{ status?: string; cliente?: string; page?: string }>;
 }) {
   const params = await searchParams;
-  const [clients, products, servicesPage] = await Promise.all([
+  const [clients, products, catalogServices, servicesPage] = await Promise.all([
     getClients(),
     getProducts(),
+    getServiceCatalog(),
     getServiceRecordsPage({
       status: params.status,
       clientId: params.cliente,
@@ -55,7 +61,11 @@ export default async function ServicesPage({
               </Button>
             }
           >
-            <ServiceForm clients={clients} products={products} />
+            <ServiceForm
+              clients={clients}
+              products={products}
+              catalogServices={catalogServices}
+            />
           </Sheet>
         }
       />
@@ -110,7 +120,12 @@ export default async function ServicesPage({
                     title="Editar atendimento"
                     trigger={<Button variant="secondary">Editar</Button>}
                   >
-                    <ServiceForm service={service} clients={clients} products={products} />
+                    <ServiceForm
+                      service={service}
+                      clients={clients}
+                      products={products}
+                      catalogServices={catalogServices}
+                    />
                   </Sheet>
                   <QuickActionForm
                     action={updateServiceStatusAction}

@@ -8,7 +8,6 @@ import {
   Sparkles,
   UsersRound,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { VeloraLogo, VeloraSymbol } from "@/components/brand/velora-logo";
 import { LinkButton } from "@/components/ui/button";
@@ -94,30 +93,71 @@ export function MarketingHeader() {
 
 export function MarketingFooter() {
   return (
-    <footer className="border-t border-border/60 bg-surface/70">
-      <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1fr_auto] lg:px-8">
+    <footer className="border-t border-border-soft bg-surface-soft/40 pt-16 pb-8">
+      <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 sm:px-6 md:grid-cols-[1.5fr_1fr_1fr_1fr] lg:px-8">
         <div>
-          <div>
+          <div className="flex items-center gap-3">
             <VeloraLogo compact />
-            <p className="mt-2 text-sm text-muted">
-              Gestão premium para rotina de beleza.
-            </p>
           </div>
-          <p className="mt-4 max-w-xl text-sm leading-6 text-muted">
-            Feito para cabeleireiras que querem agenda, histórico técnico,
-            estoque e financeiro em uma experiência simples de usar no celular.
+          <p className="mt-6 max-w-sm text-sm leading-relaxed text-muted">
+            O sistema premium definitivo para cabeleireiras. Agenda, histórico técnico, 
+            estoque e financeiro em uma experiência luxuosa e simples de usar.
           </p>
         </div>
-        <div className="flex flex-wrap gap-2 md:justify-end">
-          {marketingNav.map((item) => (
-            <LinkButton key={item.href} href={item.href} variant="ghost" size="sm">
-              {item.label}
-            </LinkButton>
-          ))}
-          <LinkButton href="/login" variant="secondary" size="sm">
-            Login
-          </LinkButton>
+        
+        <div>
+          <h3 className="text-sm font-bold uppercase tracking-wider text-foreground">Produto</h3>
+          <ul className="mt-4 flex flex-col gap-3">
+            {marketingNav.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} className="text-sm font-medium text-muted hover:text-lilac transition-colors">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
+
+        <div>
+          <h3 className="text-sm font-bold uppercase tracking-wider text-foreground">Acesso</h3>
+          <ul className="mt-4 flex flex-col gap-3">
+            <li>
+              <Link href="/login" className="text-sm font-medium text-muted hover:text-lilac transition-colors">
+                Entrar na conta
+              </Link>
+            </li>
+            <li>
+              <Link href="/cadastro" className="text-sm font-medium text-muted hover:text-lilac transition-colors">
+                Criar conta grátis
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-sm font-bold uppercase tracking-wider text-foreground">Legal</h3>
+          <ul className="mt-4 flex flex-col gap-3">
+            <li>
+              <Link href="/termos" className="text-sm font-medium text-muted hover:text-lilac transition-colors">
+                Termos de Uso
+              </Link>
+            </li>
+            <li>
+              <Link href="/privacidade" className="text-sm font-medium text-muted hover:text-lilac transition-colors">
+                Privacidade
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-16 pt-8 border-t border-border-soft flex flex-col md:flex-row justify-between items-center gap-4">
+        <p className="text-xs text-muted-strong">
+          © {new Date().getFullYear()} Velora Software. Todos os direitos reservados.
+        </p>
+        <p className="text-xs text-muted-strong flex items-center gap-1">
+          Feito com <Sparkles size={12} className="text-lilac" /> para profissionais da beleza.
+        </p>
       </div>
     </footer>
   );
@@ -189,20 +229,33 @@ export function HeroSection() {
   return (
     <section className="relative min-h-[88svh] overflow-hidden pt-16 flex items-center">
       <AnimatedHeroGraphic />
+      {/* Mobile-only background graphic */}
+      <div className="absolute inset-0 z-0 flex lg:hidden items-center justify-center opacity-30 pointer-events-none overflow-hidden">
+        <div className="absolute h-[300px] w-[300px] rounded-full border border-lilac/20 animate-[spin_40s_linear_infinite]" />
+        <div className="absolute h-[200px] w-[200px] rounded-full border border-white/5 animate-[spin_20s_linear_infinite_reverse]" />
+        <div className="absolute h-32 w-32 rounded-full bg-gradient-to-br from-lilac-strong to-transparent blur-[60px] animate-pulse" />
+      </div>
+
       <div className="relative z-10 mx-auto flex w-full max-w-7xl items-center px-4 py-16 sm:px-6 lg:px-8">
         <div className="max-w-2xl animate-fade-in-up">
-          <h1 className="max-w-2xl text-4xl font-semibold leading-tight text-foreground sm:text-6xl">
-            Velora organiza o salão sem tirar beleza da rotina.
+          {/* Mobile-only symbol floating above text */}
+          <div className="lg:hidden mb-8 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-surface-raised to-surface shadow-[0_0_30px_-5px_var(--lilac-strong)] border border-lilac/20 backdrop-blur-xl animate-[float_6s_ease-in-out_infinite]">
+            <VeloraSymbol className="h-6 w-6" />
+          </div>
+
+          <h1 className="max-w-2xl text-4xl sm:text-5xl lg:text-6xl font-semibold leading-[1.15] tracking-tight text-foreground">
+            Velora organiza o salão sem tirar a beleza da rotina.
           </h1>
-          <p className="mt-5 max-w-xl text-base leading-8 text-muted sm:text-lg animate-fade-in delay-200">
-            Organização premium, simples e elegante para a sua rotina no salão.
+          <p className="mt-6 max-w-xl text-base sm:text-lg leading-relaxed text-muted animate-fade-in delay-200">
+            Organização premium, simples e elegante para a sua rotina no salão. 
+            Agendamentos, financeiro e produtos integrados em um só lugar.
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row animate-fade-in delay-300">
-            <LinkButton href="/cadastro" variant="primary" className="h-12 px-5">
+          <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-fade-in delay-300">
+            <LinkButton href="/cadastro" variant="primary" className="h-14 sm:h-12 px-6 rounded-2xl sm:rounded-xl text-base sm:text-sm font-semibold">
               Criar conta grátis
-              <ArrowRight size={17} />
+              <ArrowRight size={18} className="ml-1" />
             </LinkButton>
-            <LinkButton href="/recursos" variant="secondary" className="h-12 px-5">
+            <LinkButton href="/recursos" variant="secondary" className="h-14 sm:h-12 px-6 rounded-2xl sm:rounded-xl text-base sm:text-sm font-semibold">
               Ver recursos
             </LinkButton>
           </div>
@@ -240,16 +293,16 @@ export function SectionIntro({
 
 export function FeatureGrid({ className }: { className?: string }) {
   return (
-    <div className={cn("grid gap-4 md:grid-cols-2 xl:grid-cols-3", className)}>
+    <div className={cn("-mx-4 px-4 sm:mx-0 sm:px-0 flex sm:grid gap-4 sm:grid-cols-2 xl:grid-cols-3 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-4 sm:pb-0", className)}>
       {featureCards.map((feature) => {
         const Icon = feature.icon;
         return (
-          <article key={feature.title} className="premium-panel rounded-lg p-5">
-            <div className="brand-tile mb-5 flex h-11 w-11 items-center justify-center rounded-lg text-lilac">
-              <Icon size={20} />
+          <article key={feature.title} className="premium-panel min-w-[280px] w-[80vw] sm:w-auto sm:min-w-0 snap-center shrink-0 rounded-2xl p-6 transition hover:border-lilac/30">
+            <div className="brand-tile mb-6 flex h-12 w-12 items-center justify-center rounded-xl text-lilac shadow-md">
+              <Icon size={22} />
             </div>
-            <h3 className="text-lg font-semibold text-foreground">{feature.title}</h3>
-            <p className="mt-3 text-sm leading-6 text-muted">{feature.description}</p>
+            <h3 className="text-xl font-bold tracking-tight text-foreground">{feature.title}</h3>
+            <p className="mt-3 text-sm leading-relaxed text-muted">{feature.description}</p>
           </article>
         );
       })}

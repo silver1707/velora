@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Pagination } from "@/components/ui/pagination";
 import { Sheet } from "@/components/ui/sheet";
-import { currency, dateTimeLabel, dayRange } from "@/lib/utils";
+import { currency, dayRange } from "@/lib/utils";
 import { deleteFinanceEntryAction } from "@/server/actions/finance";
 import {
   getClients,

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Sheet } from "@/components/ui/sheet";
 import { currency, dateLabel, dateTimeLabel, statusLabel, statusTone } from "@/lib/utils";
-import { getClientById, getProducts } from "@/server/queries";
+import { getClientById, getProducts, getServiceCatalog } from "@/server/queries";
 
 export default async function ClientDetailPage({
   params,
@@ -16,9 +16,10 @@ export default async function ClientDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [detail, products] = await Promise.all([
+  const [detail, products, catalogServices] = await Promise.all([
     getClientById(id).catch(() => null),
     getProducts(),
+    getServiceCatalog(),
   ]);
 
   if (!detail) {
@@ -26,6 +27,9 @@ export default async function ClientDetailPage({
   }
 
   const { client, services } = detail;
+  const servicesWithPhotos = services.filter(
+    (service) => service.before_photo_url || service.after_photo_url,
+  );
 
   return (
     <>
@@ -44,7 +48,12 @@ export default async function ClientDetailPage({
               </Button>
             }
           >
-            <ServiceForm clients={[client]} products={products} defaultClientId={client.id} />
+            <ServiceForm
+              clients={[client]}
+              products={products}
+              defaultClientId={client.id}
+              catalogServices={catalogServices}
+            />
           </Sheet>
         }
       />
@@ -117,6 +126,7 @@ export default async function ClientDetailPage({
                       width={500}
                       height={360}
                       className="aspect-[4/3] w-full rounded-lg object-cover"
+                      unoptimized
                     />
                   </div>
                 ) : null}
@@ -129,6 +139,7 @@ export default async function ClientDetailPage({
                       width={500}
                       height={360}
                       className="aspect-[4/3] w-full rounded-lg object-cover"
+                      unoptimized
                     />
                   </div>
                 ) : null}
@@ -137,7 +148,63 @@ export default async function ClientDetailPage({
           ) : null}
         </aside>
 
-        <section className="premium-panel rounded-lg p-5">
+        <div className="grid gap-6">
+          {servicesWithPhotos.length ? (
+            <section className="premium-panel rounded-lg p-5">
+              <div className="mb-5 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-rose/25 bg-rose/10 text-rose">
+                  <Clock size={18} />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-foreground">
+                    Evolução visual
+                  </h2>
+                  <p className="text-sm text-muted">
+                    Antes e depois registrados em cada atendimento.
+                  </p>
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                {servicesWithPhotos.slice(0, 4).map((service) => (
+                  <article key={service.id} className="surface-row rounded-lg p-3">
+                    <p className="mb-3 text-sm font-medium text-foreground">
+                      {service.service_type} · {dateLabel(service.scheduled_at)}
+                    </p>
+                    <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
+                      {service.before_photo_url ? (
+                        <div>
+                          <p className="mb-2 text-xs text-muted">Antes</p>
+                          <Image
+                            src={service.before_photo_url}
+                            alt={`Antes de ${service.service_type}`}
+                            width={420}
+                            height={315}
+                            className="aspect-[4/3] w-full rounded-lg object-cover"
+                            unoptimized
+                          />
+                        </div>
+                      ) : null}
+                      {service.after_photo_url ? (
+                        <div>
+                          <p className="mb-2 text-xs text-muted">Depois</p>
+                          <Image
+                            src={service.after_photo_url}
+                            alt={`Depois de ${service.service_type}`}
+                            width={420}
+                            height={315}
+                            className="aspect-[4/3] w-full rounded-lg object-cover"
+                            unoptimized
+                          />
+                        </div>
+                      ) : null}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null}
+
+          <section className="premium-panel rounded-lg p-5">
           <div className="mb-5 flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-lilac/20 bg-lilac/10 text-lilac">
               <Clock size={18} />
@@ -187,6 +254,36 @@ export default async function ClientDetailPage({
                       {service.notes}
                     </p>
                   ) : null}
+                  {service.before_photo_url || service.after_photo_url ? (
+                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                      {service.before_photo_url ? (
+                        <div>
+                          <p className="mb-2 text-xs text-muted">Antes</p>
+                          <Image
+                            src={service.before_photo_url}
+                            alt={`Antes de ${service.service_type}`}
+                            width={420}
+                            height={315}
+                            className="aspect-[4/3] w-full rounded-lg object-cover"
+                            unoptimized
+                          />
+                        </div>
+                      ) : null}
+                      {service.after_photo_url ? (
+                        <div>
+                          <p className="mb-2 text-xs text-muted">Depois</p>
+                          <Image
+                            src={service.after_photo_url}
+                            alt={`Depois de ${service.service_type}`}
+                            width={420}
+                            height={315}
+                            className="aspect-[4/3] w-full rounded-lg object-cover"
+                            unoptimized
+                          />
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : null}
                 </article>
               ))}
             </div>
@@ -196,7 +293,8 @@ export default async function ClientDetailPage({
               description="Quando um serviço for registrado para esta cliente, ele aparecerá nesta linha do tempo."
             />
           )}
-        </section>
+          </section>
+        </div>
       </section>
     </>
   );

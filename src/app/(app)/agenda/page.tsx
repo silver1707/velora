@@ -1,10 +1,14 @@
 import { CalendarPlus } from "lucide-react";
-import { format, startOfDay } from "date-fns";
 import { ServiceForm } from "@/components/forms/service-form";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
 import { Sheet } from "@/components/ui/sheet";
-import { getClients, getProducts, getServiceRecords } from "@/server/queries";
+import {
+  getClients,
+  getProducts,
+  getServiceCatalog,
+  getServiceRecords,
+} from "@/server/queries";
 import { AgendaView } from "@/components/dashboard/agenda-view";
 
 export default async function AgendaPage({
@@ -20,9 +24,10 @@ export default async function AgendaPage({
     : new Date();
 
   // Load larger range to ensure we have data for the week/month
-  const [clients, products, services] = await Promise.all([
+  const [clients, products, catalogServices, services] = await Promise.all([
     getClients(),
     getProducts(),
+    getServiceCatalog(),
     getServiceRecords({
       // Fetch 6 weeks to safely cover any monthly view
       from: new Date(currentDate.getTime() - 40 * 24 * 60 * 60 * 1000).toISOString(),
@@ -47,7 +52,11 @@ export default async function AgendaPage({
               </Button>
             }
           >
-            <ServiceForm clients={clients} products={products} />
+            <ServiceForm
+              clients={clients}
+              products={products}
+              catalogServices={catalogServices}
+            />
           </Sheet>
         }
       />
@@ -59,6 +68,7 @@ export default async function AgendaPage({
           services={services} 
           clients={clients} 
           products={products} 
+          catalogServices={catalogServices}
         />
       </div>
     </>

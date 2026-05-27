@@ -1,14 +1,20 @@
 import {
   CalendarClock,
+  CalendarPlus,
   CircleDollarSign,
   PackageCheck,
   Scissors,
   UsersRound,
 } from "lucide-react";
+import { QuickActionForm } from "@/components/forms/quick-action-form";
 import { ServicesChart } from "@/components/dashboard/services-chart";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import {
+  acceptBookingRequestAction,
+  rejectBookingRequestAction,
+} from "@/server/actions/bookings";
 import { getDashboardData } from "@/server/queries";
 import { currency, dateTimeLabel, statusLabel, statusTone } from "@/lib/utils";
 
@@ -77,6 +83,64 @@ export default async function DashboardPage() {
           detail="Itens abaixo do mínimo ou marcados como acabando."
         />
       </section>
+
+      {data.bookingRequests.length ? (
+        <section className="premium-panel mt-6 rounded-lg p-5">
+          <div className="mb-5 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-lilac/20 bg-lilac/10 text-lilac">
+              <CalendarPlus size={18} />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">
+                Pedidos de agendamento online
+              </h2>
+              <p className="text-sm text-muted">
+                Confirme os horários que chegaram pelo seu link público.
+              </p>
+            </div>
+          </div>
+          <div className="grid gap-3 lg:grid-cols-2">
+            {data.bookingRequests.map((request) => (
+              <article key={request.id} className="surface-row rounded-lg p-4">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="font-medium text-foreground">{request.client_name}</p>
+                    <p className="mt-1 text-sm text-muted">
+                      {request.service_name} · {dateTimeLabel(request.requested_start_at)}
+                    </p>
+                    <p className="mt-1 text-sm text-muted">
+                      {currency(request.estimated_price)} · {request.requested_duration_minutes} min
+                    </p>
+                    {request.client_notes ? (
+                      <p className="mt-2 text-sm leading-6 text-muted">
+                        {request.client_notes}
+                      </p>
+                    ) : null}
+                  </div>
+                  <Badge className="border-gold/30 bg-gold/10 text-gold">
+                    Pendente
+                  </Badge>
+                </div>
+                <div className="mt-4 flex flex-wrap gap-2 border-t border-border-soft pt-4">
+                  <QuickActionForm
+                    action={acceptBookingRequestAction}
+                    fields={{ id: request.id }}
+                    label="Aceitar"
+                    variant="primary"
+                  />
+                  <QuickActionForm
+                    action={rejectBookingRequestAction}
+                    fields={{ id: request.id }}
+                    label="Recusar"
+                    variant="danger"
+                    confirmMessage="Recusar este pedido de agendamento?"
+                  />
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="mt-6 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
         <article className="premium-panel rounded-lg p-5">

@@ -9,7 +9,7 @@ import {
   isSameDay,
   isSameMonth,
   isToday,
-  parseISO,
+  isTomorrow,
   startOfMonth,
   startOfWeek,
   subDays,
@@ -17,13 +17,15 @@ import {
   subWeeks,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock, Edit2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { Sheet } from "@/components/ui/sheet";
 import { ServiceForm } from "@/components/forms/service-form";
 import { QuickActionForm } from "@/components/forms/quick-action-form";
 import { updateServiceStatusAction } from "@/server/actions/services";
-import { currency, statusLabel, statusTone } from "@/lib/utils";
+import { LinkButton } from "@/components/ui/button";
+import type { Client, Product, ServiceCatalogItem, ServiceRecord } from "@/lib/types";
+import { currency } from "@/lib/utils";
 
 // Helper to determine the default duration for layout purposes
 const DEFAULT_DURATION = 60; // 60 minutes
@@ -36,12 +38,14 @@ export function AgendaView({
   currentDate,
   clients,
   products,
+  catalogServices,
 }: {
-  services: any[];
+  services: ServiceRecord[];
   view: string;
   currentDate: Date;
-  clients: any[];
-  products: any[];
+  clients: Client[];
+  products: Product[];
+  catalogServices: ServiceCatalogItem[];
 }) {
   const formatUrl = (newDate: Date, newView?: string) => {
     const params = new URLSearchParams();
@@ -103,7 +107,7 @@ export function AgendaView({
           </h2>
         </div>
 
-        <div className="flex bg-surface-raised p-1 rounded-xl">
+        <div className="flex w-max self-start sm:self-auto bg-surface-raised p-1 rounded-xl">
           <Link
             href={formatUrl(currentDate, "dia")}
             className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-all ${
@@ -139,16 +143,60 @@ export function AgendaView({
       {view === "mes" ? (
         <MonthlyGrid currentDate={currentDate} services={services} />
       ) : view === "semana" ? (
-        <WeeklyTimeline currentDate={currentDate} services={services} clients={clients} products={products} />
+        <WeeklyTimeline
+          currentDate={currentDate}
+          services={services}
+          clients={clients}
+          products={products}
+          catalogServices={catalogServices}
+        />
       ) : (
-        <DailyTimeline currentDate={currentDate} services={services} clients={clients} products={products} />
+        <DailyTimeline
+          services={services}
+          clients={clients}
+          products={products}
+          catalogServices={catalogServices}
+        />
       )}
     </div>
   );
 }
 
-function ServiceCard({ service, clients, products }: { service: any; clients: any[]; products: any[] }) {
-  const isConfirmed = service.status === "agendado";
+function whatsappNumber(phone?: string | null) {
+  const digits = (phone ?? "").replace(/\D/g, "");
+  if (digits.length === 10 || digits.length === 11) {
+    return `55${digits}`;
+  }
+
+  return digits.length > 11 ? digits : "";
+}
+
+function whatsappReminderLink(service: ServiceRecord) {
+  const date = new Date(service.scheduled_at);
+  const when = isToday(date)
+    ? "hoje"
+    : isTomorrow(date)
+      ? "amanhã"
+      : `no dia ${format(date, "dd/MM", { locale: ptBR })}`;
+  const message = `Olá ${service.clients?.name ?? ""}, tudo bem? Passando para confirmar nosso horário ${when} às ${format(date, "HH:mm")} para ${service.service_type}. Te espero!`;
+  const phone = whatsappNumber(service.clients?.phone);
+
+  return phone
+    ? `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
+    : `https://wa.me/?text=${encodeURIComponent(message)}`;
+}
+
+function ServiceCard({
+  service,
+  clients,
+  products,
+  catalogServices,
+}: {
+  service: ServiceRecord;
+  clients: Client[];
+  products: Product[];
+  catalogServices: ServiceCatalogItem[];
+}) {
   const isDone = service.status === "concluido";
   const isCanceled = service.status === "cancelado";
 
@@ -176,8 +224,22 @@ function ServiceCard({ service, clients, products }: { service: any; clients: an
       }
     >
       <div className="flex flex-col h-full">
-         <ServiceForm service={service} clients={clients} products={products} />
-         <div className="mt-8 pt-6 border-t border-border-soft flex gap-3">
+         <ServiceForm
+           service={service}
+           clients={clients}
+           products={products}
+           catalogServices={catalogServices}
+         />
+         <div className="mt-8 pt-6 border-t border-border-soft flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+             <LinkButton
+               href={whatsappReminderLink(service)}
+               target="_blank"
+               rel="noreferrer"
+               className="border-lilac/35 bg-lilac/10 text-foreground hover:border-lilac/60 hover:bg-surface-glow"
+             >
+               <MessageCircle size={16} />
+               Lembrete via WhatsApp
+             </LinkButton>
              <QuickActionForm
                action={updateServiceStatusAction}
                fields={{ id: service.id, status: "concluido" }}
@@ -196,7 +258,17 @@ function ServiceCard({ service, clients, products }: { service: any; clients: an
   );
 }
 
-function DailyTimeline({ currentDate, services, clients, products }: { currentDate: Date; services: any[]; clients: any[]; products: any[] }) {
+function DailyTimeline({
+  services,
+  clients,
+  products,
+  catalogServices,
+}: {
+  services: ServiceRecord[];
+  clients: Client[];
+  products: Product[];
+  catalogServices: ServiceCatalogItem[];
+}) {
   const hours = Array.from({ length: END_HOUR - START_HOUR + 1 }, (_, i) => START_HOUR + i);
   const HOUR_HEIGHT = 90; // Pixels per hour
 
@@ -238,7 +310,12 @@ function DailyTimeline({ currentDate, services, clients, products }: { currentDa
                 className="absolute left-4 right-4 sm:left-6 sm:right-6 sm:w-2/3 max-w-lg pointer-events-auto z-20"
                 style={{ top: `${top}px`, height: `${height - 4}px` }}
               >
-                <ServiceCard service={service} clients={clients} products={products} />
+                <ServiceCard
+                  service={service}
+                  clients={clients}
+                  products={products}
+                  catalogServices={catalogServices}
+                />
               </div>
             );
           })}
@@ -248,7 +325,19 @@ function DailyTimeline({ currentDate, services, clients, products }: { currentDa
   );
 }
 
-function WeeklyTimeline({ currentDate, services, clients, products }: { currentDate: Date; services: any[]; clients: any[]; products: any[] }) {
+function WeeklyTimeline({
+  currentDate,
+  services,
+  clients,
+  products,
+  catalogServices,
+}: {
+  currentDate: Date;
+  services: ServiceRecord[];
+  clients: Client[];
+  products: Product[];
+  catalogServices: ServiceCatalogItem[];
+}) {
   const start = startOfWeek(currentDate, { weekStartsOn: 1 });
   const days = Array.from({ length: 7 }, (_, i) => addDays(start, i));
   const hours = Array.from({ length: END_HOUR - START_HOUR + 1 }, (_, i) => START_HOUR + i);
@@ -308,7 +397,12 @@ function WeeklyTimeline({ currentDate, services, clients, products }: { currentD
                         className="absolute left-1 right-1 pointer-events-auto z-20"
                         style={{ top: `${top}px`, height: `${height - 2}px` }}
                       >
-                         <ServiceCard service={service} clients={clients} products={products} />
+                         <ServiceCard
+                           service={service}
+                           clients={clients}
+                           products={products}
+                           catalogServices={catalogServices}
+                         />
                       </div>
                     );
                   })}
@@ -322,7 +416,13 @@ function WeeklyTimeline({ currentDate, services, clients, products }: { currentD
   );
 }
 
-function MonthlyGrid({ currentDate, services }: { currentDate: Date; services: any[] }) {
+function MonthlyGrid({
+  currentDate,
+  services,
+}: {
+  currentDate: Date;
+  services: ServiceRecord[];
+}) {
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(monthStart);
   const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });

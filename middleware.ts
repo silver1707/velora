@@ -9,6 +9,8 @@ const publicRoutes = [
   "/recursos",
   "/sobre",
   "/precos",
+  "/termos",
+  "/privacidade",
 ];
 
 export async function middleware(request: NextRequest) {

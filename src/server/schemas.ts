@@ -16,6 +16,20 @@ const optionalUrl = z.preprocess(
   z.string().url("Informe uma URL válida.").nullable(),
 );
 
+const optionalSlug = z.preprocess((value) => {
+  if (value === "" || value === undefined || value === null) {
+    return null;
+  }
+
+  return String(value)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}, z.string().min(3, "Use pelo menos 3 caracteres.").regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use apenas letras, números e hífens.").nullable());
+
 const optionalNumber = z.preprocess((value) => {
   if (value === "" || value === undefined || value === null) {
     return null;
@@ -105,7 +119,46 @@ export const serviceRecordSchema = z.object({
     }
     return Number(value);
   }, z.number().int().min(5).max(720).nullable()),
+  before_photo_url: optionalUrl,
+  after_photo_url: optionalUrl,
   status: z.enum(["agendado", "concluido", "cancelado", "pendente"]),
+});
+
+export const serviceCatalogSchema = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string().min(2, "Informe o nome do serviço."),
+  price: requiredMoney,
+  duration_minutes: z.preprocess((value) => {
+    if (value === "" || value === undefined || value === null) {
+      return 60;
+    }
+    return Number(value);
+  }, z.number().int().min(5, "Duração mínima de 5 minutos.").max(720, "Duração máxima de 12 horas.")),
+  description: optionalText,
+  is_active: z.preprocess((value) => value === "on" || value === "true", z.boolean()),
+});
+
+export const profileSettingsSchema = z.object({
+  full_name: optionalText,
+  business_name: optionalText,
+  public_slug: optionalSlug,
+  whatsapp_phone: optionalText,
+  booking_enabled: z.preprocess((value) => value === "on" || value === "true", z.boolean()),
+});
+
+export const publicBookingRequestSchema = z.object({
+  professional_id: z.string().uuid("Profissional inválida."),
+  slug: z.string().min(3),
+  service_catalog_id: z.string().uuid("Escolha um serviço."),
+  requested_start_at: z
+    .string()
+    .min(1, "Escolha um horário livre.")
+    .refine((value) => !Number.isNaN(new Date(value).getTime()), {
+      message: "Horário inválido.",
+    }),
+  client_name: z.string().min(2, "Informe seu nome."),
+  client_phone: z.string().min(8, "Informe um WhatsApp válido."),
+  client_notes: optionalText,
 });
 
 export const statusUpdateSchema = z.object({

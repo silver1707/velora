@@ -2,6 +2,7 @@ import {
   ArrowRight,
   CalendarCheck2,
   CheckCircle2,
+  ChevronDown,
   Clock3,
   ShieldCheck,
   Smartphone,
@@ -33,6 +34,29 @@ const workflow = [
   },
 ];
 
+const faqs = [
+  {
+    question: "Preciso ter um computador?",
+    answer:
+      "Não. O Velora foi desenhado para funcionar muito bem no celular, com telas rápidas para agenda, clientes, financeiro e estoque.",
+  },
+  {
+    question: "Consigo lembrar clientes pelo WhatsApp?",
+    answer:
+      "Sim. Na agenda, cada horário pode abrir o WhatsApp com uma mensagem pronta de confirmação.",
+  },
+  {
+    question: "Posso cadastrar minha própria tabela de preços?",
+    answer:
+      "Sim. Em Ajustes você cadastra serviços, valores e duração para preencher novos agendamentos em poucos toques.",
+  },
+  {
+    question: "Como funciona o cancelamento?",
+    answer:
+      "Você pode encerrar a assinatura quando quiser. A ideia do Velora é ser útil todos os dias, sem prender sua rotina.",
+  },
+];
+
 export default function LandingPage() {
   return (
     <MarketingShell>
@@ -57,31 +81,36 @@ export default function LandingPage() {
               title="Da cliente ao financeiro, sem retrabalho."
               description="Cada ação alimenta a próxima: ao concluir um atendimento, o histórico fica salvo e o financeiro recebe o valor automaticamente."
             />
-            <div className="grid gap-4">
-              {workflow.map((item, index) => {
-                const Icon = item.icon;
-                return (
-                  <article key={item.title} className="premium-panel grid gap-4 rounded-lg p-5 sm:grid-cols-[54px_1fr] transition">
-                    <div className="brand-tile flex h-12 w-12 items-center justify-center rounded-lg text-lilac">
-                      <Icon size={20} />
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold uppercase text-lilac">
-                        Passo {index + 1}
-                      </p>
-                      <h3 className="mt-1 text-lg font-semibold text-foreground">
-                        {item.title}
-                      </h3>
-                      <p className="mt-2 text-sm leading-6 text-muted">{item.text}</p>
-                    </div>
-                  </article>
-                );
-              })}
+            <div className="relative">
+              {/* Vertical timeline line */}
+              <div className="absolute left-[35px] top-4 bottom-4 w-px bg-gradient-to-b from-lilac-strong/50 via-lilac/20 to-transparent hidden sm:block" />
+              
+              <div className="grid gap-6 sm:gap-8">
+                {workflow.map((item, index) => {
+                  const Icon = item.icon;
+                  return (
+                    <article key={item.title} className="relative grid gap-4 rounded-2xl sm:grid-cols-[70px_1fr] transition">
+                      <div className="brand-tile relative z-10 flex h-14 w-14 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-2xl text-lilac shadow-lg">
+                        <Icon size={24} />
+                      </div>
+                      <div className="premium-panel sm:bg-transparent sm:border-none sm:shadow-none sm:p-0 rounded-2xl p-6">
+                        <p className="text-xs font-bold uppercase tracking-wider text-lilac">
+                          Passo {index + 1}
+                        </p>
+                        <h3 className="mt-2 text-xl font-bold text-foreground">
+                          {item.title}
+                        </h3>
+                        <p className="mt-2 text-sm leading-relaxed text-muted">{item.text}</p>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="relative px-4 sm:px-6 lg:px-8">
+        <section className="relative px-4 sm:px-6 lg:px-8 mt-12 sm:mt-0">
           <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
             {[
               {
@@ -102,15 +131,44 @@ export default function LandingPage() {
             ].map((item) => {
               const Icon = item.icon;
               return (
-                <article key={item.title} className="surface-row rounded-lg p-5 transition hover:bg-surface-glow/40">
-                  <Icon className="text-lilac" size={22} />
-                  <h3 className="mt-4 text-lg font-semibold text-foreground">
+                <article key={item.title} className="surface-row rounded-2xl p-6 transition hover:bg-surface-glow/40 border border-border-soft">
+                  <div className="h-12 w-12 rounded-xl bg-surface-soft flex items-center justify-center mb-5">
+                    <Icon className="text-lilac" size={24} />
+                  </div>
+                  <h3 className="text-lg font-bold tracking-tight text-foreground">
                     {item.title}
                   </h3>
-                  <p className="mt-2 text-sm leading-6 text-muted">{item.text}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">{item.text}</p>
                 </article>
               );
             })}
+          </div>
+        </section>
+
+        <section className="relative px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+            <SectionIntro
+              eyebrow="Dúvidas frequentes"
+              title="Respostas rápidas antes de começar."
+              description="As perguntas que normalmente aparecem antes de uma profissional levar o Velora para a rotina do salão."
+            />
+            <div className="grid gap-3">
+              {faqs.map((item) => (
+                <details
+                  key={item.question}
+                  className="surface-row group rounded-lg p-4"
+                >
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-foreground">
+                    {item.question}
+                    <ChevronDown
+                      size={18}
+                      className="shrink-0 text-lilac transition group-open:rotate-180"
+                    />
+                  </summary>
+                  <p className="mt-3 text-sm leading-6 text-muted">{item.answer}</p>
+                </details>
+              ))}
+            </div>
           </div>
         </section>
 

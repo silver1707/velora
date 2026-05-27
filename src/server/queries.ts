@@ -7,7 +7,16 @@ import {
   type PageInput,
 } from "@/lib/pagination";
 import { dayRange, monthRange } from "@/lib/utils";
-import type { Client, FinancialEntry, Product, ServiceRecord } from "@/lib/types";
+import type {
+  BookingRequest,
+  Client,
+  FinancialEntry,
+  Product,
+  ProfileSettings,
+  PublicBookingProfile,
+  ServiceCatalogItem,
+  ServiceRecord,
+} from "@/lib/types";
 
 export async function requireSession() {
   const supabase = await createSupabaseServerClient();
@@ -88,6 +97,37 @@ export async function getClientsPage(
   });
 }
 
+export async function getProfileSettings() {
+  const { supabase } = await requireSession();
+  const { data, error } = await supabase.from("profiles").select("*").single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as ProfileSettings;
+}
+
+export async function getServiceCatalog(params?: { includeInactive?: boolean }) {
+  const { supabase } = await requireSession();
+  let query = supabase
+    .from("service_catalog")
+    .select("*")
+    .order("is_active", { ascending: false })
+    .order("name", { ascending: true });
+
+  if (!params?.includeInactive) {
+    query = query.eq("is_active", true);
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data ?? []) as ServiceCatalogItem[];
+}
+
 export async function getClientById(id: string) {
   const { supabase } = await requireSession();
   const [{ data: client, error }, { data: services, error: serviceError }] =
@@ -110,6 +150,91 @@ export async function getClientById(id: string) {
   return {
     client: client as Client,
     services: (services ?? []) as ServiceRecord[],
+  };
+}
+
+export async function getBookingRequests(params?: { status?: string; limit?: number }) {
+  const { supabase } = await requireSession();
+  let query = supabase
+    .from("booking_requests")
+    .select("*, service_catalog(id, name, price, duration_minutes)")
+    .order("requested_start_at", { ascending: true });
+
+  if (params?.status) {
+    query = query.eq("status", params.status);
+  }
+  if (params?.limit) {
+    query = query.limit(params.limit);
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data ?? []) as BookingRequest[];
+}
+
+export async function getPublicBookingData(
+  slug: string,
+  params?: { date?: string; serviceId?: string },
+) {
+  const supabase = await createSupabaseServerClient();
+  const { data: profileRows, error: profileError } = await supabase.rpc(
+    "get_public_booking_profile",
+    { p_slug: slug },
+  );
+
+  if (profileError) {
+    throw new Error(profileError.message);
+  }
+
+  const profile = Array.isArray(profileRows)
+    ? (profileRows[0] as PublicBookingProfile | undefined)
+    : (profileRows as PublicBookingProfile | null);
+
+  if (!profile) {
+    return null;
+  }
+
+  const { data: services, error: servicesError } = await supabase
+    .from("service_catalog")
+    .select("*")
+    .eq("user_id", profile.id)
+    .eq("is_active", true)
+    .order("name", { ascending: true });
+
+  if (servicesError) {
+    throw new Error(servicesError.message);
+  }
+
+  const catalog = (services ?? []) as ServiceCatalogItem[];
+  const selectedService =
+    catalog.find((service) => service.id === params?.serviceId) ?? catalog[0] ?? null;
+  let slots: { starts_at: string }[] = [];
+
+  if (selectedService && params?.date) {
+    const { data: slotRows, error: slotsError } = await supabase.rpc(
+      "get_public_available_slots",
+      {
+        p_slug: slug,
+        p_date: params.date,
+        p_duration_minutes: selectedService.duration_minutes,
+      },
+    );
+
+    if (slotsError) {
+      throw new Error(slotsError.message);
+    }
+
+    slots = (slotRows ?? []) as { starts_at: string }[];
+  }
+
+  return {
+    profile,
+    services: catalog,
+    selectedService,
+    slots,
   };
 }
 
@@ -334,6 +459,7 @@ export async function getDashboardData() {
     upcoming,
     todayAppointments,
     products,
+    bookingRequests,
   ] = await Promise.all([
     supabase.from("clients").select("id", { count: "exact", head: true }),
     supabase
@@ -361,6 +487,12 @@ export async function getDashboardData() {
       .neq("status", "cancelado")
       .order("scheduled_at", { ascending: true }),
     supabase.from("products").select("*").order("stock_quantity", { ascending: true }),
+    supabase
+      .from("booking_requests")
+      .select("*, service_catalog(id, name, price, duration_minutes)")
+      .eq("status", "pendente")
+      .order("requested_start_at", { ascending: true })
+      .limit(6),
   ]);
 
   if (clientsCount.error) throw new Error(clientsCount.error.message);
@@ -369,6 +501,7 @@ export async function getDashboardData() {
   if (upcoming.error) throw new Error(upcoming.error.message);
   if (todayAppointments.error) throw new Error(todayAppointments.error.message);
   if (products.error) throw new Error(products.error.message);
+  if (bookingRequests.error) throw new Error(bookingRequests.error.message);
 
   const services = (monthServices.data ?? []) as ServiceRecord[];
   const finance = (monthFinance.data ?? []) as FinancialEntry[];
@@ -397,6 +530,7 @@ export async function getDashboardData() {
     ),
     upcoming: (upcoming.data ?? []) as ServiceRecord[],
     todayAppointments: (todayAppointments.data ?? []) as ServiceRecord[],
+    bookingRequests: (bookingRequests.data ?? []) as BookingRequest[],
     servicesByType,
     lowStock: lowStock.slice(0, 6),
   };
